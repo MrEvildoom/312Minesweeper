@@ -12,7 +12,7 @@ type Bombs = Int
 type Board = [[Cell]]
 
 -- each Cell is a cell with the contents of the cell
-data Cell = Cell Content State -- add a location?, new type of either just Int or (Int,Int)
+data Cell = Cell Content State Location-- add a location?, new type of either just Int or (Int,Int)
               deriving (Show, Eq)
 -- Content is what a cell contains
 data Content = Bomb |

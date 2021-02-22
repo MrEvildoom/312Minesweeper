@@ -6,22 +6,18 @@ import JMinesweeper
 import System.IO
 import System.Random
 
-{-- each Cell is a cell with the contents of the cell
-data Cell = Cell Content State Location
-              deriving (Show, Eq)
--}
 -- Board Generation --
 -- Makes a board of size n x n, with all cells Blank and Covered
 -- makeBoard :: Int -> Board
 makeBoard n = combineRows n n
 
 --makes n x n list of Rows ([Cell])
-combineRows n 1 = [makeRow n]
-combineRows n cnt = (makeRow n) : (combineRows n (cnt - 1))
+combineRows n 1 = [makeRow n 0 (n-1)]
+combineRows n cnt = (makeRow n 0 (n-cnt)) : (combineRows n (cnt - 1))
 
---makes a row ([Cell]) with all cells Blank and Covered
-makeRow 0 = []
-makeRow n = (Cell Blank Covered) : makeRow (n-1)
+-- makes the row y with locations at x, each Cell is Cell Blank Covered (y,x)
+makeRow 0 x y = []
+makeRow n x y = (Cell Blank Covered (y,x)) : (makeRow (n-1) (x+1) y)
 
 testBoard = makeBoard 5
 
@@ -38,7 +34,7 @@ randLoc size n =
     do
         xg <- newStdGen
         yg <- newStdGen    
-        return (zip (take n (randomRs (0, size) xg)) (take n (randomRs (0, size) yg)))
+        return (zip (take n (randomRs (0, size-1) yg)) (take n (randomRs (0, size-1) xg)))
 
 {-
 OLD IMPLEMENTATION
