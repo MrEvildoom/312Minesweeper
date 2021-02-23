@@ -32,10 +32,21 @@ testBoard = makeBoard 5
 
 {-- TODO
 Place bombs on the board randomly
-Takes a Board, number of bombs wanted, list of random locations, and returns a Board
+Takes a Board, nNumber of bombs wanted, List of random locations, list of used locations, and returns a Board
 To initialize, call with an empty list and the desired number of bombs
 --}
---placeBombs :: Board -> Int -> Int -> [Location]
+placeBombs :: Board -> Int -> [Location] -> [Location] -> Board
+placeBombs b 0 _ _ = b
+placeBombs b n [] used = placeBombs b n (randLoc (getSize b) n) used
+placeBombs b n l:ls used =
+  | l `elem` used = placeBombs b n ls used
+  | otherwise = placeBombs (setContent b l Bomb) n-1 ls l:used
+
+-- sets the cell in a board at location to content
+-- TODO this does not work
+setContent :: Board -> Location -> Content -> Board
+-- setContent b (x, y) c = (\(Cell _ s l) -> Cell c s l) ((b !! y) !! x)
+setContent b l c = b
 
 -- gets a list of n location for bombs to be replaced (allows duplicates, that should be fixed)
 randLoc :: Size -> Int -> [Location]
@@ -59,3 +70,8 @@ randLoc size =
         y <- randomRIO (0,size)
         return (x,y)
 -}
+-- Helper Functions
+
+-- gets a board's size so we don't have to always give size as an argument
+getSize :: Board -> Size
+getsize b = (length (b !! 0), length b)
