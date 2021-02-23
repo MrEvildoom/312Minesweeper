@@ -1,8 +1,8 @@
 -- Brendan's Minesweeper Additions
 
-module BMinesweeper where
+module MGeneration where
 
-import JMinesweeper
+import MData
 import System.IO
 import System.Random
 

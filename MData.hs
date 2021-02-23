@@ -1,7 +1,7 @@
 {--
 Basic data structures and functions for a game of minesweeper
 --}
-module JMinesweeper where
+module MData where
 
 data Game = Gamestate Size Bombs Board
 -- Size is the x and y dimensions of the board
@@ -56,4 +56,3 @@ getGameContent (x, y) (Gamestate _ _ b) = gContent (b !! x) !! y
                where gContent :: Cell -> Content
                      gContent (Cell c _) = c
 -}
-
