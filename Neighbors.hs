@@ -1,5 +1,7 @@
 -- a function that finds neighbors
-module Neighbors where
+module Neighbors (
+      findNeighbors)
+      where
 
 type Location = (Int, Int)
 type Size = (Int, Int)
