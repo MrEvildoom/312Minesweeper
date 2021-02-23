@@ -30,13 +30,20 @@ testBoard = makeBoard 5
 -- placeBombs :: Board -> Board
 --PUT FN here
 
+{-- TODO
+Place bombs on the board randomly
+Takes a Board, number of bombs wanted, list of random locations, and returns a Board
+To initialize, call with an empty list and the desired number of bombs
+--}
+--placeBombs :: Board -> Int -> Int -> [Location]
+
 -- gets a list of n location for bombs to be replaced (allows duplicates, that should be fixed)
-randLoc :: Int -> Int -> [Location]
-randLoc size n =
+randLoc :: Size -> Int -> [Location]
+randLoc (xsize, ysize) n =
     do
         xg <- newStdGen
         yg <- newStdGen
-        return (zip (take n (randomRs (0, size-1) yg)) (take n (randomRs (0, size-1) xg)))
+        return (zip (take n (randomRs (0, xsize-1) xg)) (take n (randomRs (0, ysize-1) yg)))
 
 {-
 OLD IMPLEMENTATION
