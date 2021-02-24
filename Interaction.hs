@@ -2,7 +2,6 @@ module Interaction where
 
 import MData
 import System.IO
-import Neighbors
 
 -- Pressing a cell
 -- Is it revealed?/is it a flag?
