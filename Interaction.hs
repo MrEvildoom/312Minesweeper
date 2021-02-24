@@ -33,6 +33,7 @@ flagCell (CellC cc cs cl) =
   then (CellC cc Covered cl)
   else (CellC cc Flagged cl)
 
+-- takes a board and a location of a blank cell, returns a board with cells around it revealed
 revealSpread :: Board -> [Location] -> [Location] -> Board
 revealSpread b [] _ = b
 revealSpread b (l:ls) oldls

@@ -45,7 +45,7 @@ placeBombs b n (l:ls) used
 
 
 
--- gets a list of n location for bombs to be replaced (allows duplicates, that should be fixed)
+-- gets a list of n location for bombs to be replaced (allows duplicates)
 randLoc :: Size -> Int -> [Location]
 randLoc (xsize, ysize) n =
     do
