@@ -19,15 +19,15 @@ import Neighbors
 flag :: Board -> Location -> Board
 flag b loc = map (flagRow loc) b
   where flagRow ::Location -> Row -> Row
-        flagRow loc row = map (\ (CellC cc cs cl) -> 
+        flagRow loc row = map (\ (CellC cc cs cl) ->
             if cl == loc
             then flagCell (CellC cc cs cl)
             else (CellC cc cs cl)) row
 
--- given a Cell, set its state to flagged (or unflag if flagged) if it is not revealed 
+-- given a Cell, set its state to flagged (or unflag if flagged) if it is not revealed
 flagCell :: Cell -> Cell
-flagCell (CellC cc cs cl) = 
-  if cs == Uncovered 
+flagCell (CellC cc cs cl) =
+  if cs == Uncovered
   then (CellC cc cs cl) --in game could output message "already revealed"
   else if cs == Flagged
   then (CellC cc Covered cl)
@@ -35,11 +35,11 @@ flagCell (CellC cc cs cl) =
 
 revealSpread :: Board -> [Location] -> [Location] -> Board
 revealSpread b [] _ = b
-revealSpread b (l:ls) oldls 
+revealSpread b (l:ls) oldls
   | l `elem` oldls = revealSpread b ls oldls -- discard if revealed
-  | (getContent b l) == 0 = revealSpread (setState b l Uncovered) 
+  | (getContent b l) == 0 = revealSpread (setState b l Uncovered)
                             -- uncover cell
-                            (getRevNeighbors ++ ls) 
+                            (getRevNeighbors ++ ls)
                              -- add revealable neighbors to ls
                             (l:oldls) -- mark l as revealed
   | otherwise = revealSpread (setState b l Uncovered) ls (l:oldls)
@@ -51,18 +51,3 @@ revealSpread b (l:ls) oldls
     revealable loc = ((getContent b loc) == Clue) && ((getState b loc) == Covered)
 
 -- Helper Functions
-
-getContent :: Board -> Location -> Content
-getContent b (x,y) = (\(CellC c _ _) -> c) ((b !! y) !! x)
-
-getState :: Board -> Location -> State
-getState b (x,y) = (\(CellC _ s _) -> s) ((b !! y) !! x)
-
--- Given a board, a location and Content, update the cell content
-setState :: Board -> Location -> State -> Board
-setState b loc state = map (setStateRow loc state) b
-  where setStateRow :: Location -> State -> Row -> Row
-        setStateRow loc state row =
-          map (\(CellC cc cs cl) -> if cl == loc
-            then (CellC cc state cl)
-            else (CellC cc cs cl)) row
