@@ -3,6 +3,7 @@
 module MGeneration where
 
 import MData
+import MInteraction
 import System.IO
 import System.Random
 
@@ -20,7 +21,7 @@ combineRows n cnt = (makeRow n (0, (n-cnt))) : (combineRows n (cnt - 1))
 -- Int is a counter, size is location of next cell to make
 makeRow :: Int -> Location -> [Cell]
 makeRow 0 (x, y) = []
-makeRow n (x, y) = (CellC Blank Covered (x,y)) : (makeRow (n-1) ((x+1), y))
+makeRow n (x, y) = (CellC Unitialized Covered (x,y)) : (makeRow (n-1) ((x+1), y))
 
 testBoard = makeBoard 5 3
 
@@ -54,7 +55,7 @@ randLoc (xsize, ysize) n =
         return (zip (take n (randomRs (0, xsize-1) xg)) (take n (randomRs (0, ysize-1) yg)))
 
 -- Helper Functions
--- Given a row and a x location and Content, update the cell
+-- Given a board, a location and Content, update the cell content
 setContent :: Board -> Location -> Content -> Board
 setContent b loc content = map (setContentRow loc content) b
   where setContentRow :: Location -> Content -> Row -> Row
@@ -62,6 +63,19 @@ setContent b loc content = map (setContentRow loc content) b
           map (\(CellC cc cs cl) -> if cl == loc
             then (CellC content cs cl)
             else (CellC cc cs cl)) row
+
+-- assigns each cell without a bomb a clue
+clueGeneration :: Board -> Board
+clueGeneration b = map (map makeClue (getSize b)) b
+  where
+    makeClue :: Size -> Cell -> Cell
+    makeClue size (CellC Unitialized cs cl) = (CellC (CalcBombs
+    makeClue size cell = cell
+
+{--
+Arguments are:
+Starting board, Locations to reveal, Locations already revealed
+--}
 
 -- gets a board's size so we don't have to always give size as an argument
 getSize :: Board -> Size
