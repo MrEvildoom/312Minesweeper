@@ -8,20 +8,21 @@ import System.Random
 
 -- Board Generation --
 -- Makes a board of size n x n, with all cells Blank and Covered
-makeBoard :: Int -> Board
-makeBoard n = combineRows n n
+makeBoard :: Size -> Board
+makeBoard (width, height) = combineRows width height
 
 --makes n x n list of Rows ([Cell])
 combineRows :: Int -> Int -> [[Cell]]
 combineRows n 1 = [makeRow n 0 (n-1)]
-combineRows n cnt = (makeRow n 0 (n-cnt)) : (combineRows n (cnt - 1))
+combineRows n cnt = (makeRow n (0, (n-cnt))) : (combineRows n (cnt - 1))
 
--- makes the row y with locations at x, each Cell is Cell Blank Covered (y,x)
-makeRow :: Int -> Int -> [Cell]
-makeRow 0 x y = []
-makeRow n x y = (Cell Blank Covered (y,x)) : (makeRow (n-1) (x+1) y)
+-- makes the row y with locations at x, each Cell is Cell Blank Covered (x,y)
+-- Int is a counter, size is location of next cell to make
+makeRow :: Int -> Location -> [Cell]
+makeRow 0 (x, y) = []
+makeRow n (x, y) = (Cell Blank Covered (x,y)) : (makeRow (n-1) ((x+1), y))
 
-testBoard = makeBoard 5
+testBoard = makeBoard 5 3
 
 -- Bomb Generation --
 -- Place bombs on the board randomly
@@ -38,7 +39,7 @@ To initialize, call with an empty list and the desired number of bombs
 placeBombs :: Board -> Int -> [Location] -> [Location] -> Board
 placeBombs b 0 _ _ = b
 placeBombs b n [] used = placeBombs b n (randLoc (getSize b) n) used
-placeBombs b n l:ls used =
+placeBombs b n (l:ls) used
   | l `elem` used = placeBombs b n ls used
   | otherwise = placeBombs (setContent b l Bomb) n-1 ls l:used
 
