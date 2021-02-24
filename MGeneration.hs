@@ -43,8 +43,6 @@ placeBombs b n (l:ls) used
   | l `elem` used = placeBombs b n ls used
   | otherwise = placeBombs (setContent b l Bomb) n-1 ls l:used
 
-
-
 -- gets a list of n location for bombs to be replaced (allows duplicates)
 randLoc :: Size -> Int -> [Location]
 randLoc (xsize, ysize) n =
@@ -53,4 +51,12 @@ randLoc (xsize, ysize) n =
         yg <- newStdGen
         return (zip (take n (randomRs (0, xsize-1) xg)) (take n (randomRs (0, ysize-1) yg)))
 
--- Helper Functions
+-- takes a board without clues and returns a board with clues
+placeClues :: Board -> Board
+placeClues b = map.map calcClues b
+  where
+    calcClues :: Cell -> Cell
+    calcClues (CellC Blank s l) = (CellC sumBombs (findNeighbors l) s l)
+    calcClues cell = cell
+    sumBombs :: [Location] -> Clue
+    sumBombs ls = foldl (\acc c -> if  c == Bomb then acc+1 else acc) 0 (map (getContent b) ls)
