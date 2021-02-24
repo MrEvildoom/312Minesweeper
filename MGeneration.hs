@@ -20,7 +20,7 @@ combineRows n cnt = (makeRow n (0, (n-cnt))) : (combineRows n (cnt - 1))
 -- Int is a counter, size is location of next cell to make
 makeRow :: Int -> Location -> [Cell]
 makeRow 0 (x, y) = []
-makeRow n (x, y) = (Cell Blank Covered (x,y)) : (makeRow (n-1) ((x+1), y))
+makeRow n (x, y) = (CellC Blank Covered (x,y)) : (makeRow (n-1) ((x+1), y))
 
 testBoard = makeBoard 5 3
 
@@ -43,11 +43,7 @@ placeBombs b n (l:ls) used
   | l `elem` used = placeBombs b n ls used
   | otherwise = placeBombs (setContent b l Bomb) n-1 ls l:used
 
--- sets the cell in a board at location to content
--- TODO this does not work
-setContent :: Board -> Location -> Content -> Board
--- setContent b (x, y) c = (\(Cell _ s l) -> Cell c s l) ((b !! y) !! x)
-setContent b l c = b
+
 
 -- gets a list of n location for bombs to be replaced (allows duplicates, that should be fixed)
 randLoc :: Size -> Int -> [Location]
@@ -57,21 +53,15 @@ randLoc (xsize, ysize) n =
         yg <- newStdGen
         return (zip (take n (randomRs (0, xsize-1) xg)) (take n (randomRs (0, ysize-1) yg)))
 
-{-
-OLD IMPLEMENTATION
--- gets a list of n random locations for bombs to go // causing issues as No instance for (Show (IO (Integer, Integer))
-getBombLoc size 1 = [randLoc size]
-getBombLoc size n = (randLoc size) : (getBombLoc size (n-1))
-
--- makes a random location given the size of the board
--- randLoc :: Int -> Int -> Location
-randLoc size =
-    do
-        x <- randomRIO (0,size)
-        y <- randomRIO (0,size)
-        return (x,y)
--}
 -- Helper Functions
+-- Given a row and a x location and Content, update the cell
+setContent :: Board -> Location -> Content -> Board
+setContent b loc content = map (setContentRow loc content) b
+  where setContentRow :: Location -> Content -> Row -> Row
+        setContentRow loc content row =
+          map (\(CellC cc cs cl) -> if cl == loc
+            then (CellC content cs cl)
+            else (CellC cc cs cl)) row
 
 -- gets a board's size so we don't have to always give size as an argument
 getSize :: Board -> Size

@@ -8,11 +8,14 @@ data Game = Gamestate Size Bombs Board
 type Size = (Int, Int)
 -- Bombs is the number of remaining bombs
 type Bombs = Int
--- Board is the array of cells
-type Board = [[Cell]]
+-- Board is a list of Rows
+type Board = [Row]
+
+-- Row is a list of Cells
+type Row = [Cell]
 
 -- each Cell is a cell with the contents of the cell
-data Cell = Cell Content State Location-- add a location?, new type of either just Int or (Int,Int)
+data Cell = CellC Content State Location-- add a location?, new type of either just Int or (Int,Int)
               deriving (Show, Eq)
 -- Content is what a cell contains
 data Content = Bomb |
