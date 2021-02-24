@@ -61,4 +61,4 @@ setState b loc state = map (setStateRow loc state) b
 
 -- gets a board's size so we don't have to always give size as an argument
 getSize :: Board -> Size
-getsize b = (length (b !! 0), length b)
+getSize b = (length (b !! 0), length b)
