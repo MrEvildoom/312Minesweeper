@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: f6f19e2db50f805d677ad2d35b66aeb80ca92bb3216ee61564fa55b9489cbb2c
+-- hash: 3fda6af7803e9b88513128a36e36d95314e75337227e3ea407171fce3148bb0b
 
 name:           312Minesweeper
 version:        0.1.0.0
@@ -56,6 +56,7 @@ test-suite 312Minesweeper-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      GenerationTests
       Paths_312Minesweeper
   hs-source-dirs:
       test

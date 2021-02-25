@@ -10,7 +10,6 @@ type Size = (Int, Int)
 type Bombs = Int
 -- Board is a list of Rows
 type Board = [Row]
-
 -- Row is a list of Cells
 type Row = [Cell]
 
@@ -30,6 +29,11 @@ data State = Covered |
 
 -- Location identifies a particular Cell on the board
 type Location = (Int, Int)
+
+data Difficulty = Easy |
+                  Medium |
+                  Hard
+                  deriving (Show,Eq)
 
 -- Data Functions
 

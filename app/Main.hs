@@ -5,4 +5,4 @@ import MGeneration
 import Interaction
 
 main :: IO ()
-main = someFunc
+main = putStrLn "Hello, World"
