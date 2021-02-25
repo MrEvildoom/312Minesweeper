@@ -37,7 +37,7 @@ revealSpread :: Board -> [Location] -> [Location] -> Board
 revealSpread b [] _ = b
 revealSpread b (l:ls) oldls
   | l `elem` oldls = revealSpread b ls oldls -- discard if revealed
-  | (getContent b l) == 0 = revealSpread (setState b l Uncovered)
+  | (getContent b l) == Clue 0 = revealSpread (setState b l Uncovered)
                             -- uncover cell
                             (getRevNeighbors ++ ls)
                              -- add revealable neighbors to ls
@@ -48,6 +48,6 @@ revealSpread b (l:ls) oldls
     getRevNeighbors = filter revealable ((findNeighbors l (getSize b)))
     -- cells are revealable if they are covered, not flagged, and a clue
     revealable :: Location -> Bool
-    revealable loc = ((getContent b loc) == Clue) && ((getState b loc) == Covered)
+    revealable loc = ((getContent b loc) /= Bomb) && ((getState b loc) == Covered)
 
 -- Helper Functions

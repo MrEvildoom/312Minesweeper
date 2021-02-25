@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 75207bec13813b2ee27b5f322f5e5552acc25565bfd75cbcdfc3df98c4977d97
+-- hash: f6f19e2db50f805d677ad2d35b66aeb80ca92bb3216ee61564fa55b9489cbb2c
 
 name:           312Minesweeper
 version:        0.1.0.0
@@ -27,13 +27,16 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
+      Interaction
+      MData
+      MGeneration
   other-modules:
       Paths_312Minesweeper
   hs-source-dirs:
       src
   build-depends:
       base >=4.7 && <5
+    , random
   default-language: Haskell2010
 
 executable 312Minesweeper-exe
@@ -46,6 +49,7 @@ executable 312Minesweeper-exe
   build-depends:
       312Minesweeper
     , base >=4.7 && <5
+    , random
   default-language: Haskell2010
 
 test-suite 312Minesweeper-test
@@ -59,4 +63,5 @@ test-suite 312Minesweeper-test
   build-depends:
       312Minesweeper
     , base >=4.7 && <5
+    , random
   default-language: Haskell2010

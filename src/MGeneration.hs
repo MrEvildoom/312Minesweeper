@@ -53,10 +53,12 @@ randLoc (xsize, ysize) n =
 
 -- takes a board without clues and returns a board with clues
 placeClues :: Board -> Board
-placeClues b = map.map calcClues b
+placeClues b = map (map calcClues) b
   where
     calcClues :: Cell -> Cell
-    calcClues (CellC Blank s l) = (CellC sumBombs (findNeighbors l) s l)
+    calcClues (CellC Blank s l) = (CellC (sumBombs (findNeighbors l (getSize b)))
+                                         s l)
     calcClues cell = cell
-    sumBombs :: [Location] -> Clue
-    sumBombs ls = foldl (\acc c -> if  c == Bomb then acc+1 else acc) 0 (map (getContent b) ls)
+    sumBombs :: [Location] -> Content
+    sumBombs ls = Clue (foldl (\acc c -> if  c == Bomb then acc+1 else acc) 0
+                              (map (getContent b) ls))
