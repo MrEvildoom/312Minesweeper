@@ -19,11 +19,9 @@ data Cell = CellC Content State Location-- add a location?, new type of either j
               deriving (Show, Eq)
 -- Content is what a cell contains
 data Content = Bomb |
-               Clue |
+               Clue Int |
                Blank
                deriving (Show,Eq)
--- if a cell is a clue, it says the number of bombs next to it.
-type Clue = Int
 
 data State = Covered |
              Flagged |

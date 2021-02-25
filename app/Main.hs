@@ -1,6 +1,8 @@
 module Main where
 
-import Lib
+import MData
+import MGeneration
+import Interaction
 
 main :: IO ()
 main = someFunc
