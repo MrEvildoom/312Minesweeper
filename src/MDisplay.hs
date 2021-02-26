@@ -26,28 +26,34 @@ F is a flag
 
 display :: Game -> IO ()
 display g = putStrLn ((makeInfoLine     g) ++
-                      (makeTopLine      g) ++ ['\n']
+                      (makeTopLine      g) ++
                       (makeDisplayBoard g))
 
 makeInfoLine :: Game -> [Char]
 makeInfoLine (Gamestate _ bombs _) = (show bombs) ++ " Bombs \n"
 
 makeTopLine :: Game -> [Char]
-makeTopLine (Gamestate (x, _) _ _) = ' ':' ':(intersperse ' ' (take x ['a'..]))
+makeTopLine (Gamestate (x, _) _ _) = ' ':' ':(intersperse ' ' (take x ['a'..])) ++ "\n"
 
 makeDisplayBoard :: Game -> [Char]
-makeBoard (Gamestate (x, y) bombs board) = flatBoard
+makeDisplayBoard (Gamestate (x, y) bombs board) = flatBoard
   where
-    charBoard    = map $ map cellToChar board
+    charBoard    :: [[Char]]
+    zippedBoard  :: [(Char, [Char])]
+    splicedBoard :: [[Char]]
+    spreadBoard  :: [[Char]]
+    linedBoard   :: [[Char]]
+    flatBoard    :: [Char]
+    charBoard    = map (map cellToChar) board
     zippedBoard  = zip ['a'..] charBoard
-    splicedBoard = foldr (\(label, row) acc -> (label:row):acc) zippedBoard []
+    splicedBoard = foldr (\(label, row) acc -> (label:row):acc) zippedBoard [[]]
     spreadBoard  = map (intersperse ' ') splicedBoard
-    linedBoard   = intersperse ['/n'] splicedBoard
+    linedBoard   = intersperse "\n" splicedBoard
     flatBoard    = concat linedBoard
 
 
 cellToChar :: Cell -> Char
-cellToChar (Cell _ Covered _)          = 'X'
-cellToChar (Cell _ Flagged _)          = 'F'
-cellToChar (Cell (Clue 0) Uncovered _) = '0'
-cellToChar (Cell (Clue c) Uncovered _) = (show c) !! 0
+cellToChar (CellC _ Covered _)          = 'X'
+cellToChar (CellC _ Flagged _)          = 'F'
+cellToChar (CellC (Clue 0) Uncovered _) = '0'
+cellToChar (CellC (Clue c) Uncovered _) = (show c) !! 0
