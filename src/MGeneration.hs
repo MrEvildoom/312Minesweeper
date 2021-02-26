@@ -16,12 +16,12 @@ makeGame Hard   = placeClues.placeBombs (Gamestate (24, 20) 99 (makeBoard (24, 2
 -- Board Generation --
 -- Makes a board of size x by y, with all cells Blank and Covered
 makeBoard :: Size -> Board
-makeBoard (width, height) = combineRows (width, height)
+makeBoard (width, height) = combineRows (width, height) height
   where
       --makes cnt lists of Rows ([Cell]) of length n
-      combineRows :: Size -> Board
-      combineRows (n, 1)   = [makeRow n (0, 0)] -- TODO: should this be the base case, or _ 0 = []?
-      combineRows (n, cnt) = (makeRow n (0, (n-cnt))) : (combineRows (n, (cnt - 1)))
+      combineRows :: Size -> Int -> Board
+      combineRows (w, h) 1   = [makeRow w (0, (h-1))] -- TODO: should this be the base case, or _ 0 = []?
+      combineRows (w, h) cnt = (makeRow w (0, (h-cnt))) : (combineRows (w, h) (cnt - 1))
 
 -- makes the row y with locations at x, each Cell is Cell Blank Covered (x,y)
 -- Int is a counter, (x, y) is location of next cell to make
@@ -29,7 +29,7 @@ makeRow :: Int -> Location -> Row
 makeRow 0 (x, y) = []
 makeRow n (x, y) = (CellC Blank Covered (x,y)) : (makeRow (n-1) ((x+1), y))
 
-testBoard = makeBoard (20, 15)
+testBoard = makeBoard (5, 4)
 
 
 placeBombs :: Game -> Game

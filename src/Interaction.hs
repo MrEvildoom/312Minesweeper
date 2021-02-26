@@ -42,7 +42,7 @@ clickCell (CellC cc cs cl) b loc =
 -- the win condition: # of non-bomb cells revealed + # of remaining uncovered bomb tiles = total tiles on the board.
 checkWinCondition :: Cell -> Board -> Location -> Board
 checkWinCondition (CellC cc cs cl) b loc =
-  if 
+  if (countBombs)
 
 
 
