@@ -40,9 +40,18 @@ clickCell (CellC cc cs cl) b loc =
   
 -- check win condition, if not met then reach just reveal the board spread.
 -- the win condition: # of non-bomb cells revealed + # of remaining uncovered bomb tiles = total tiles on the board.
-checkWinCondition :: Cell -> Board -> Location -> Board
-checkWinCondition (CellC cc cs cl) (l:ls) loc =
-  if ((countBombsFn _) + (countRevealedCells _ )) == 
+checkWinCondition :: Cell -> Board -> Board
+checkWinCondition (CellC cc cs cl) (l:ls) =
+  if ((countBombsFn (l:ls)) + (countRevealedCells (l:ls))) == (length l) * (length ls)
+  then b -- TODO: win condition, terminate the function
+  else b
+
+-- should count all the bombs on the board
+countBombsFn :: Board -> Location -> Num
+countBombs xss = sum [1 | xs <- xss, x <- xs, (getContent xss (x location)) == Bomb] 
+-- should count all the currently revealed cells on the board
+countRevealedCells :: Board -> Location -> Num
+countRevealedCells xss = sum [1 | xs <- xss, x <- xs, (getContent xss (x location)) == Bomb] 
 
 
 
