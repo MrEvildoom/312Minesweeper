@@ -25,9 +25,9 @@ F is a flag
 --}
 
 display :: Game -> IO ()
-display g = putStrLn ((makeInfoLine g) ++
-                      (makeTopLine  g) ++ ['\n']
-                      (makeBoard    g))
+display g = putStrLn ((makeInfoLine     g) ++
+                      (makeTopLine      g) ++ ['\n']
+                      (makeDisplayBoard g))
 
 makeInfoLine :: Game -> [Char]
 makeInfoLine (Gamestate _ bombs _) = (show bombs) ++ " Bombs \n"
@@ -35,8 +35,16 @@ makeInfoLine (Gamestate _ bombs _) = (show bombs) ++ " Bombs \n"
 makeTopLine :: Game -> [Char]
 makeTopLine (Gamestate (x, _) _ _) = ' ':' ':(intersperse ' ' (take x ['a'..]))
 
-makeBoard :: Game -> [Char]
-makeBoard (Gamestate (x, y) bombs board) = "Board"
+makeDisplayBoard :: Game -> [Char]
+makeBoard (Gamestate (x, y) bombs board) = flatBoard
+  where
+    charBoard    = map $ map cellToChar board
+    zippedBoard  = zip ['a'..] charBoard
+    splicedBoard = foldr (\(label, row) acc -> (label:row):acc) zippedBoard []
+    spreadBoard  = map (intersperse ' ') splicedBoard
+    linedBoard   = intersperse ['/n'] splicedBoard
+    flatBoard    = concat linedBoard
+
 
 cellToChar :: Cell -> Char
 cellToChar (Cell _ Covered _)          = 'X'
