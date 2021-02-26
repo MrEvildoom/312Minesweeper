@@ -11,6 +11,8 @@ import System.IO
 -- Check for win condition
 --clickCell :: Board -> Location -> Board
 
+--TODO chance clicking a cell to work with a game and not board
+
 -- Pressing a cell --
 -- given a board and location, find the cell on the board to operate on.
 -- if the cell at loc is revealed then do nothing
@@ -35,7 +37,7 @@ clickCell (CellC cc cs cl) b loc =
   else if cc == Bomb
   then b 	-- TODO: game over. Return to original I/O console message. 
   else if cc != Bomb       
-  then checkWinCondition (Cell C cc cs cl) (revealSpread	b (loc:[]) []) loc	-- uncover this cell and change the state of everything that should be revealed.
+  then checkWinCondition (Cell C cc cs cl) (revealSpread	b (loc:[]) []) loc)	-- uncover this cell and change the state of everything that should be revealed.
   else (CellC cc cs cl)
   
 -- check win condition, if not met then reach just reveal the board spread.
@@ -57,6 +59,10 @@ countRevealedCells xss = sum [1 | xs <- xss, x <- xs, (getState xss (x location)
 
 
 -- FLAGGING A CELL --
+--TODO make work with game not board
+
+flagGame 
+
 -- given a board and location, flag the location, or unflag if it is already flagged
 -- if the cell at loc is revealed then do nothing
 flag :: Board -> Location -> Board

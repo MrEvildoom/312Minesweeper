@@ -9,9 +9,9 @@ import Data.List
 
 -- Takes a difficulty and makes a game of the corresponding difficulty
 makeGame :: Difficulty -> Game
-makeGame Easy   = placeClues.placeBombs (Gamestate (10, 8)  10 (makeBoard (10, 8)))
-makeGame Medium = placeClues.placeBombs (Gamestate (18, 14) 40 (makeBoard (18, 14)))
-makeGame Hard   = placeClues.placeBombs (Gamestate (24, 20) 99 (makeBoard (24, 20)))
+makeGame Easy   = placeClues.placeBombs (Gamestate (10, 8)  10 (makeBoard (10, 8)) Continue)
+makeGame Medium = placeClues.placeBombs (Gamestate (18, 14) 40 (makeBoard (18, 14)) Continue)
+makeGame Hard   = placeClues.placeBombs (Gamestate (24, 20) 99 (makeBoard (24, 20)) Continue)
 
 -- Board Generation --
 -- Makes a board of size x by y, with all cells Blank and Covered
@@ -33,8 +33,8 @@ testBoard = makeBoard (5, 4)
 
 
 placeBombs :: Game -> Game
-placeBombs (Gamestate size bombs board)
-             = (Gamestate size bombs (boardPlaceBombs board size bombs [] []))
+placeBombs (Gamestate size bombs board winstate)
+             = (Gamestate size bombs (boardPlaceBombs board size bombs [] []) winstate)
 {--
 Place bombs on the board randomly
 Takes Board,
@@ -76,7 +76,7 @@ listLoc xg yg szx szy n = take n (nub (zip (randomRs szx xg) (randomRs szy yg)))
 --}
 
 placeClues :: Game -> Game
-placeclues (Gamestate size bombs board) = (Gamestate size bombs (boardPlaceClues size board))
+placeclues (Gamestate size bombs board winstate) = (Gamestate size bombs (boardPlaceClues size board) winstate)
 
 -- takes a board without clues and returns a board with clues
 boardPlaceClues :: Size -> Board -> Board

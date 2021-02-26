@@ -3,8 +3,8 @@ Basic data structures and functions for a game of minesweeper
 --}
 module MData where
 
-data Game = Gamestate Size Bombs Board
--- Size is the x and y dimensions of the board
+data Game = Gamestate Size Bombs Board WinState
+-- Size is the x and y dimensions of the board, number of bombs remaining
 type Size = (Int, Int)
 -- Bombs is the number of remaining bombs
 type Bombs = Int
@@ -12,6 +12,10 @@ type Bombs = Int
 type Board = [Row]
 -- Row is a list of Cells
 type Row = [Cell]
+
+data WinState = Win |
+                Loss |
+                Continue
 
 -- each Cell is a cell with the contents of the cell
 data Cell = CellC Content State Location-- add a location?, new type of either just Int or (Int,Int)
