@@ -51,7 +51,7 @@ countBombsFn :: Board -> Location -> Num
 countBombs xss = sum [1 | xs <- xss, x <- xs, (getContent xss (x location)) == Bomb] 
 -- should count all the currently revealed cells on the board
 countRevealedCells :: Board -> Location -> Num
-countRevealedCells xss = sum [1 | xs <- xss, x <- xs, (getContent xss (x location)) == Bomb] 
+countRevealedCells xss = sum [1 | xs <- xss, x <- xs, (getState xss (x location)) == Uncovered] 
 
 
 

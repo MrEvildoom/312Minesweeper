@@ -6,6 +6,10 @@ import Interaction
 import MDisplay
 import System.IO
 
+{- How main will work
+- we make the game (do all the initilizaiont, with difficulty, board, etc.
+-}
+
 main :: IO ()
 main = do
   putStrLn "Welcome to Minesweeper!\nPlease enter a difficulty (easy, medium, hard): "
