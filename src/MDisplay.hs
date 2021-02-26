@@ -21,7 +21,8 @@ numbers are clues
 F is a flag
 --}
 
--- display :: Game -> IO ()
+display :: Game -> IO ()
+display g = putStrLn "game display"
 
 -- makeInfoLine :: Game -> [Char]
 
