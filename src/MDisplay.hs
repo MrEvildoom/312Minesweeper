@@ -3,17 +3,18 @@
 module MDisplay where
 
 import MData
+import Data.List
 
 {--
 Displays, when printed, look like this
 
-  00 Bombs
-  0 1 2 3 4
-0 X X F 1 0
-1 X X 2 0 0
-2 X F 1 1 1
-3 X X X X X
-4 X X X X X
+  00 Bombs   -- infoLine
+  a b c d e  -- topline
+a X X F 1 0
+b X X 2 0 0
+c X F 1 1 1
+d X X X X X
+e X X X X X
 
 input "(x, y, c)"
    or "(x, y, r)"
@@ -24,8 +25,21 @@ F is a flag
 --}
 
 display :: Game -> IO ()
-display g = putStrLn (makeInfoLine g)
+display g = putStrLn ((makeInfoLine g) ++
+                      (makeTopLine  g) ++ ['\n']
+                      (makeBoard    g))
 
 makeInfoLine :: Game -> [Char]
 makeInfoLine (Gamestate _ bombs _) = (show bombs) ++ " Bombs \n"
--- makeBoard :: Game -> [Char]
+
+makeTopLine :: Game -> [Char]
+makeTopLine (Gamestate (x, _) _ _) = ' ':' ':(intersperse ' ' (take x ['a'..]))
+
+makeBoard :: Game -> [Char]
+makeBoard (Gamestate (x, y) bombs board) = "Board"
+
+cellToChar :: Cell -> Char
+cellToChar (Cell _ Covered _)          = 'X'
+cellToChar (Cell _ Flagged _)          = 'F'
+cellToChar (Cell (Clue 0) Uncovered _) = '0'
+cellToChar (Cell (Clue c) Uncovered _) = (show c) !! 0
