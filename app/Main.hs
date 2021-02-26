@@ -5,4 +5,5 @@ import MGeneration
 import Interaction
 
 main :: IO ()
-main = putStrLn "Hello, World"
+main = do
+  putStrLn "Welcome to Minesweeper!\nPlease enter a size: "
