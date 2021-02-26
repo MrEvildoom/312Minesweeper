@@ -26,21 +26,25 @@ click b loc = map (clickRow loc) b
 -- if it is already revealed, do nothing
 -- What to do if it is flagged? assume that it must be unflagged to uncover the cell.
 -- I assume when we discover a bomb, we want to reset the state of the board after outputting a game over message.
-clickCell :: Cell -> Board -> Location -> Cell
+clickCell :: Cell -> Board -> Location -> Board
 clickCell (CellC cc cs cl) b loc =
   if cs == Uncovered
-  then (CellC cc cs cl) 	-- return a message saying that this location is already revealed
+  then b 	-- return a message saying that this location is already revealed
   else if cs == Flagged
-  then (CellC cc cs cl) 	-- return a message saying that this location has been flagged, must be unflagged to uncover.
+  then b 	-- return a message saying that this location has been flagged, must be unflagged to uncover.
   else if cc == Bomb
-  then (CellC cc cs cl) 	-- TODO: game over. Return to original I/O console message. 
+  then b 	-- TODO: game over. Return to original I/O console message. 
   else if cc != Bomb       
-  then revealSpread	b (loc:[]) []	-- uncover this cell and change the state of everything that should be revealed.
-  else (CellC cc Flagged cl)
+  then checkWinCondition (Cell C cc cs cl) (revealSpread	b (loc:[]) []) loc	-- uncover this cell and change the state of everything that should be revealed.
+  else (CellC cc cs cl)
   
 -- check win condition, if not met then reach just reveal the board spread.
 -- the win condition: # of non-bomb cells revealed + # of remaining uncovered bomb tiles = total tiles on the board.
--- checkWinCondition :: Cell -> Board -> Location -> Board
+checkWinCondition :: Cell -> Board -> Location -> Board
+checkWinCondition (CellC cc cs cl) b loc =
+  if 
+
+
 
 
 -- FLAGGING A CELL --

@@ -9,9 +9,9 @@ import Data.List
 
 -- Takes a difficulty and makes a game of the corresponding difficulty
 makeGame :: Difficulty -> Game
-makeGame Easy   = placeBombs (Gamestate (10, 8)  10 (makeBoard (10, 8)))
-makeGame Medium = placeBombs (Gamestate (18, 14) 40 (makeBoard (18, 14)))
-makeGame Hard   = placeBombs (Gamestate (24, 20) 99 (makeBoard (24, 20)))
+makeGame Easy   = placeClues.placeBombs (Gamestate (10, 8)  10 (makeBoard (10, 8)))
+makeGame Medium = placeClues.placeBombs (Gamestate (18, 14) 40 (makeBoard (18, 14)))
+makeGame Hard   = placeClues.placeBombs (Gamestate (24, 20) 99 (makeBoard (24, 20)))
 
 -- Board Generation --
 -- Makes a board of size x by y, with all cells Blank and Covered
@@ -29,7 +29,7 @@ makeRow :: Int -> Location -> Row
 makeRow 0 (x, y) = []
 makeRow n (x, y) = (CellC Blank Covered (x,y)) : (makeRow (n-1) ((x+1), y))
 
-testBoard = makeBoard (5, 3)
+testBoard = makeBoard (20, 15)
 
 
 placeBombs :: Game -> Game
@@ -63,6 +63,7 @@ newRandLoc (xsize, ysize) n =
     yg <- newStdGen
     return (listLoc xg yg (0, (xsize-1)) (0, (ysize-1)) n)
 
+
 listLoc xg yg szx szy n = take n (nub (zip (randomRs szx xg) (randomRs szy yg)))
 
 {--
@@ -74,13 +75,16 @@ listLoc xg yg szx szy n = take n (nub (zip (randomRs szx xg) (randomRs szy yg)))
                   (take n (randomRs (0, ysize-1) yg)))
 --}
 
+placeClues :: Game -> Game
+placeclues (Gamestate size bombs board) = (Gamestate size bombs (boardPlaceClues size board))
+
 -- takes a board without clues and returns a board with clues
-placeClues :: Board -> Board
-placeClues b = map (map calcClues) b
+boardPlaceClues :: Size -> Board -> Board
+boardPlaceClues size b = map (map calcClues) b
   where
     calcClues :: Cell -> Cell
-    calcClues (CellC Blank s l) = (CellC (sumBombs (findNeighbors l (getSize b)))
-                                         s l)
+    calcClues (CellC Blank state loc) = (CellC (sumBombs (findNeighbors loc size))
+                                         state loc)
     calcClues cell = cell
     sumBombs :: [Location] -> Content
     sumBombs ls = Clue (foldl (\acc c -> if  c == Bomb then acc+1 else acc) 0
