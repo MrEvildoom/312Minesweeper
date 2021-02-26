@@ -5,6 +5,7 @@ module MGeneration where
 import MData
 import System.IO
 import System.Random
+import Data.List
 
 -- Takes a difficulty and makes a game of the corresponding difficulty
 makeGame :: Difficulty -> Game
@@ -53,7 +54,17 @@ boardPlaceBombs b s n (l:ls) used
 
 -- gets a list of n location for bombs to be replaced (allows duplicates)
 randLoc :: Size -> Int -> [Location]
-randLoc (xsize, ysize) n = zip [1..] [1..] --TODO this is just so the program compiles. Fix this!
+randLoc (xsize, ysize) n = (take n (zip [1..] [1..]))
+     --TODO this is just so the program compiles. Fix this!
+
+newRandLoc (xsize, ysize) n = 
+  do
+    xg <- newStdGen
+    yg <- newStdGen
+    return (listLoc xg yg (0, (xsize-1)) (0, (ysize-1)) n)
+
+listLoc xg yg szx szy n = take n (nub (zip (randomRs szx xg) (randomRs szy yg)))
+
 {--
     do
         xg <- newStdGen
