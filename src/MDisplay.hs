@@ -2,6 +2,8 @@
 
 module MDisplay where
 
+import MData
+
 {--
 Displays, when printed, look like this
 
@@ -22,8 +24,8 @@ F is a flag
 --}
 
 display :: Game -> IO ()
-display g = putStrLn "game display"
+display g = putStrLn (makeInfoLine g)
 
--- makeInfoLine :: Game -> [Char]
-
+makeInfoLine :: Game -> [Char]
+makeInfoLine (Gamestate _ bombs _) = (show bombs) ++ " Bombs \n"
 -- makeBoard :: Game -> [Char]
