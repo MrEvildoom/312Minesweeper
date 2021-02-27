@@ -19,13 +19,21 @@ clickGame (Gamestate size bombs board winState) loc =
   where checkCondition g = checkLossCondition $ checkWinCondition g
 
 click:: Board -> Location -> Board
-click board loc = map (clickRow loc) board
-  where clickRow ::Location -> Row -> Row
-        clickRow loc row = map (\ (CellC cc cs cl) ->
+click board loc = 
+  if (shouldReveal board loc)
+  then revealSpread board [loc] []
+  else map (clickRow loc) board
+    where clickRow ::Location -> Row -> Row
+          clickRow loc row = map (\ (CellC cc cs cl) ->
                                   if cl == loc
                                   then clickCell (CellC cc cs cl)
                                   else (CellC cc cs cl))
                                 row
+
+--returns true if cell should reveal beightbors (Clue 0 and not already revealed)
+shouldReveal:: Board -> Location -> Bool
+shouldReveal b loc = 
+  ((getContent b loc) == Clue 0) && ((getState b loc) == Covered)
 
 clickCell :: Cell -> Cell
 clickCell (CellC cc cs cl) =
