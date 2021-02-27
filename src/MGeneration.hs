@@ -9,9 +9,9 @@ import Data.List
 
 -- Takes a difficulty and makes a game of the corresponding difficulty
 makeGame :: Difficulty -> (StdGen, StdGen) -> Game
-makeGame Easy   gens = placeClues.placeBombs (Gamestate (10, 8)  10 (makeBoard (10, 8)) Continue) gens
-makeGame Medium gens = placeClues.placeBombs (Gamestate (18, 14) 40 (makeBoard (18, 14)) Continue) gens
-makeGame Hard   gens = placeClues.placeBombs (Gamestate (24, 20) 99 (makeBoard (24, 20)) Continue) gens
+makeGame Easy   gens = placeClues (placeBombs (Gamestate (10, 8)  10 (makeBoard (10, 8)) Continue) gens)
+makeGame Medium gens = placeClues (placeBombs (Gamestate (18, 14) 40 (makeBoard (18, 14)) Continue) gens)
+makeGame Hard   gens = placeClues (placeBombs (Gamestate (24, 20) 99 (makeBoard (24, 20)) Continue) gens)
 
 -- Board Generation --
 -- Makes a board of size x by y, with all cells Blank and Covered
