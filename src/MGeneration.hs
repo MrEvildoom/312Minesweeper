@@ -20,7 +20,7 @@ makeBoard (width, height) = combineRows (width, height) height
   where
       --makes cnt lists of Rows ([Cell]) of length n
       combineRows :: Size -> Int -> Board
-      combineRows (w, h) 1   = [makeRow w (0, (h-1))] 
+      combineRows (w, h) 1   = [makeRow w (0, (h-1))]
       combineRows (w, h) cnt = (makeRow w (0, (h-cnt))) : (combineRows (w, h) (cnt - 1))
 
 -- makes the row y with locations at x, each Cell is Cell Blank Covered (x,y)
@@ -57,7 +57,7 @@ randLoc :: Size -> Int -> [Location]
 randLoc (xsize, ysize) n = (take n (zip [1..] [1..]))
      --TODO this is just so the program compiles. Fix this!
 
-{-newRandLoc (xsize, ysize) n = 
+{-newRandLoc (xsize, ysize) n =
   do
     xg <- newStdGen
     yg <- newStdGen
@@ -76,7 +76,7 @@ listLoc (xg, yg) (szx, szy) n = take n (nub (zip (randomRs (0, szx-1) xg) (rando
 --}
 
 placeClues :: Game -> Game
-placeclues (Gamestate size bombs board winstate) = (Gamestate size bombs (boardPlaceClues size board) winstate)
+placeClues (Gamestate size bombs board winstate) = (Gamestate size bombs (boardPlaceClues size board) winstate)
 
 -- takes a board without clues and returns a board with clues
 boardPlaceClues :: Size -> Board -> Board

@@ -21,10 +21,10 @@ click:: Board -> Location -> Board
 click board loc = map (clickRow loc) board
   where clickRow ::Location -> Row -> Row
         clickRow loc row = map (\ (CellC cc cs cl) ->
-            if cl == loc
-            then clickCell (CellC cc cs cl)
-                            board loc
-            else (CellC cc cs cl)) row
+                                  if cl == loc
+                                  then clickCell (CellC cc cs cl)
+                                  else (CellC cc cs cl))
+                                row
 
 clickCell :: Cell -> Cell
 clickCell (CellC cc cs cl) =

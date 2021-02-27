@@ -19,7 +19,7 @@ main = do
   putStrLn "Welcome to Minesweeper!\nPlease enter a difficulty (easy, medium, hard): "
   xg <- newStdGen
   yg <- newStdGen
-  game <- createGameDiff (xg, yg) 
+  game <- createGameDiff (xg, yg)
   display game --display board
   putStrLn "Your board is ready to play!"
   putStrLn "to quit (and lose), enter \"quit\""
@@ -44,11 +44,11 @@ createGameDiff gens = do
   else do
     putStrLn "Please enter a valid difficulty, one of easy, medium, or hard: "
     createGameDiff gens
-  
+
 --play function takes a game and will check the win (and lose) conditon on every call
 -- if the game has been won or lost, return
 play (Gamestate size bombs board winstate) = do
-  -- 
+  --
   if (winstate == Win)
   then do
     putStrLn "You Win"
@@ -66,15 +66,15 @@ play (Gamestate size bombs board winstate) = do
         move <- getLine
         if move == "quit"
         then do
-            putStrLn "quitting game..." 
+            putStrLn "quitting game..."
             return (Gamestate size bombs board Loss)
-        else do 
+        else do
             if move == "f"
-            then do 
+            then do
                 updatedGame <- doFlag (Gamestate size bombs board winstate)
                 play updatedGame
             else if move == "c"
-            then do 
+            then do
                 updatedGame <- doClick (Gamestate size bombs board winstate)
                 play updatedGame
             else do
@@ -109,16 +109,16 @@ getLoc game = do
   else getLoc game
 
 --valid takes a coordinate and game and verifies if it is valid
-validx:: String -> Game -> Boolean
+validx:: String -> Game -> Bool
 --valid coord game = True
-validx coord (Gamestate (xsz, ysz) bombs board winstate) = 
+validx coord (Gamestate (xsz, ysz) bombs board winstate) =
   if (length coord == 1) && ((coord!!0) `elem` (take (xsz-1) ['a'..'z']))
   then True
   else False
 
-validy:: String -> Game -> Boolean
+validy:: String -> Game -> Bool
 --valid coord game = True
-validy coord (Gamestate (xsz, ysz) bombs board winstate) = 
+validy coord (Gamestate (xsz, ysz) bombs board winstate) =
   if (length coord == 1) && ((coord!!0) `elem` (take (ysz-1) ['a'..'z']))
   then True
   else False
