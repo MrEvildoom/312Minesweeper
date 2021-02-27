@@ -92,20 +92,6 @@ countRevealedCells board loc = sum [1 | row <- board,
                                         cell <- row,
                                         (getState board loc) == Uncovered]
 
---prints a message saying location is flagged
-flagMsg = do
-  putStrLn "This cell is flagged, please unflag before clicking"
-
---prints a message indicating a bomb was pressed
-bombMsg = do
-  putStrLn "You pressed a bomb.."
-
---prints a message stating that the locaiton is already revealed
-revealMsg = do
-  putStrLn "This cell is already revealed, try another one"
-
-
-
 -- FLAGGING A CELL --
 --flags the locaiton and updates the game
 --TODO: make flagging a cell decrement the number of bombs and unflagging a cell increment

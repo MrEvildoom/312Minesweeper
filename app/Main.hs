@@ -92,10 +92,11 @@ doFlag game = do
   return (flagGame game loc)
 
 --doClick will perform the click action on the location provided
-doClick game = do
+doClick (Gamestate size bombs board winstate) = do
   putStrLn "To click we need a location."
-  loc <- getLoc game
-  return (clickGame game loc)
+  loc <- getLoc (Gamestate size bombs board winstate)
+  clickMsg board loc
+  return (clickGame (Gamestate size bombs board winstate) loc)
 
 --getLoc helper for doFlag and doClick that gets a vlaid location from the user given a certain game
 getLoc game = do
@@ -130,3 +131,28 @@ validy coord (Gamestate (xsz, ysz) bombs board winstate) =
 --convert takes a string letter and converts to the correct int coordination representation
 convert:: String -> Int
 convert coord = fromJust $ elemIndex (coord!!0) ['a'..'z']
+
+--determines what message to send after a move (if flag, bomb, or already revealed)
+clickMsg board loc = do
+  if (getState board loc) == Uncovered
+  then do revealMsg
+  else do
+    if (getState board loc) == Flagged
+    then do flagMsg
+    else do
+      if (getContent board loc) == Bomb
+      then do bombMsg
+      else do putStrLn "You found a valid space, good job!"
+
+
+--prints a message saying location is flagged
+flagMsg = do
+  putStrLn "This cell is flagged, please unflag before clicking"
+
+--prints a message indicating a bomb was pressed
+bombMsg = do
+  putStrLn "You pressed a bomb.."
+
+--prints a message stating that the locaiton is already revealed
+revealMsg = do
+  putStrLn "This cell is already revealed, try another one"
