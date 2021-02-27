@@ -87,13 +87,13 @@ play (Gamestate size bombs board winstate) = do
 doFlag game = do
   putStrLn "To flag, we need a location."
   loc <- getLoc game
-  return flagGame game loc
+  return (flagGame game loc)
 
 --doClick will perform the click action on the location provided
 doClick game = do
   putStrLn "To click we need a location."
   loc <- getLoc game
-  return click game loc
+  return (clickGame game loc)
 
 --getLoc helper for doFlag and doClick that gets a vlaid location from the user given a certain game
 getLoc game = do
@@ -103,7 +103,7 @@ getLoc game = do
   then do
     putStrLn "Please enter your y-coordinate"
     y <- getLine
-    if valid y game
+    if validy y game
     then return (convert x, convert y)
     else getLoc game
   else getLoc game

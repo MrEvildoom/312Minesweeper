@@ -35,47 +35,11 @@ clickCell (CellC cc cs cl) =
   then (CellC cc cs cl)
   -- return a message saying that this location has been flagged, must be unflagged to uncover.
   else if cc == Bomb
-  then (CellC cc Uncovered cl)
+  then (CellC cc Uncovered cl) --TODO: should these be different?
   -- when we check loss condition, it should say lost now (Bomb is uncovered)
   else (CellC cc Uncovered cl)
     -- uncover this cell, if the board is a win, checking the board will cahnge state.
 
--- OLD CLICK W/ GAME --
--- given a board and location, find the cell on the board to operate on.
--- if the cell at loc is revealed then do nothing
-{-click :: Game -> Location -> Game
-click (Gamestate size bombs board winState) loc =
-      (Gamestate size bombs (map (clickRow loc) board) winState)
-  where clickRow ::Location -> Row -> Row
-        clickRow loc row = map (\ (CellC cc cs cl) ->
-            if cl == loc
-            then clickCell (CellC cc cs cl)
-                           (Gamestate size bombs board winState) loc
-            else (CellC cc cs cl)) row
-        getBoard (Gamestate size bombs board winState) = board
-
--- given a Cell,
--- if it is already revealed, do nothing
--- What to do if it is flagged? assume that it must be unflagged to uncover the cell.
--- I assume when we discover a bomb, we want to reset the state of the board after outputting a game over message.
-clickCell :: Cell -> Game -> Location -> Game
-clickCell (CellC cc cs cl) (Gamestate size bombs board winState) loc =
-
-  if cs == Uncovered
-  then (Gamestate size bombs board winState)
-  -- return a message saying that this location is already revealed
-  else if cs == Flagged
-  then (Gamestate size bombs board winState)
-  -- return a message saying that this location has been flagged, must be unflagged to uncover.
-  else if cc == Bomb
-  then (Gamestate size bombs board Loss)
-  -- TODO: game over. Return to original I/O console message.
-  else
-   checkWinCondition
-    (CellC cc cs cl)
-    (Gamestate size bombs (revealSpread board [loc] []) winState)
-    -- uncover this cell and change the state of everything that should be revealed.
--}
 -- check win condition, if not met then reach just reveal the board spread.
 -- the win condition: # of non-bomb cells revealed + # of remaining uncovered bomb tiles = total tiles on the board.
 checkWinCondition :: Game -> Game
