@@ -8,6 +8,7 @@ import System.IO
 import System.Random
 import Data.List
 import Data.Maybe (fromJust)
+import Data.Char
 
 {- How main will work
 - we make the game (do all the initilizaion, with difficulty, board, etc.
