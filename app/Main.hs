@@ -86,10 +86,11 @@ play (Gamestate size bombs board winstate) = do
     
 
 --doFlag will perform a flagging action on the location provided
-doFlag game = do
+doFlag (Gamestate size bombs board winstate) = do
   putStrLn "To flag, we need a location."
-  loc <- getLoc game
-  return (flagGame game loc)
+  loc <- getLoc (Gamestate size bombs board winstate)
+  flagMsg board loc
+  return (flagGame (Gamestate size bombs board winstate) loc)
 
 --doClick will perform the click action on the location provided
 doClick (Gamestate size bombs board winstate) = do
@@ -138,7 +139,7 @@ clickMsg board loc = do
   then do revealMsg
   else do
     if (getState board loc) == Flagged
-    then do flagMsg
+    then do clickFlagMsg
     else do
       if (getContent board loc) == Bomb
       then do bombMsg
@@ -146,7 +147,7 @@ clickMsg board loc = do
 
 
 --prints a message saying location is flagged
-flagMsg = do
+clickFlagMsg = do
   putStrLn "This cell is flagged, please unflag before clicking"
 
 --prints a message indicating a bomb was pressed
@@ -156,3 +157,19 @@ bombMsg = do
 --prints a message stating that the locaiton is already revealed
 revealMsg = do
   putStrLn "This cell is already revealed, try another one"
+
+--prints a message saying if the cell was flagged, unflagged, or could not be flagged
+flagMsg board loc = do
+  if (getState board loc) == Uncovered
+  then do revealMsg
+  else do
+    if (getState board loc) == Flagged
+    then do unflagMsg
+    else do flagingMsg
+
+
+unflagMsg = do
+  putStrLn "You unflagged the cell at the specified location"
+
+flagingMsg = do
+  putStrLn "You flagged the cell at the specified location"
