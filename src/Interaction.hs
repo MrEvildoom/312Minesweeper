@@ -2,7 +2,7 @@ module Interaction where
 
 import MData
 import System.IO
-import System.List
+import Data.List
 
 -- Pressing a cell
 -- Is it revealed?/is it a flag?
@@ -12,7 +12,7 @@ import System.List
 -- Check for win condition
 --clickCell :: Board -> Location -> Board
 
-clickGame:: Game -> Locaiton -> Game
+clickGame:: Game -> Location -> Game
 clickGame (Gamestate size bombs board winState) loc =
   checkCondition (Gamestate size bombs (click board loc) winState)
   where checkCondition g = checkLossCondition $ checkWinCondition g
@@ -79,12 +79,13 @@ clickCell (CellC cc cs cl) (Gamestate size bombs board winState) loc =
 -- check win condition, if not met then reach just reveal the board spread.
 -- the win condition: # of non-bomb cells revealed + # of remaining uncovered bomb tiles = total tiles on the board.
 checkWinCondition :: Game -> Game
-checkWinCondition (Gamestate size bombs board winState)
-  | any unrevNonbomb (concat board) = (Gamestate size bombs board winState)
-  | otherwise (Gamestate size bombs board Win)
-  where 
+checkWinCondition (Gamestate size bombs board winState) =
+  if (any unrevNonbomb (concat board))
+  then (Gamestate size bombs board winState)
+  else (Gamestate size bombs board Win)
+  where
     unrevNonbomb :: Cell -> Bool
-    unrevNonbomb (CellC Clue Covered _) = True
+    unrevNonbomb (CellC (Clue _) Covered _) = True
     unrevNonbomb _ = False
   {--
   if ((countBombsFn (l:ls)) + (countRevealedCells (l:ls))) == (length l) * (length ls)
@@ -95,14 +96,15 @@ checkWinCondition (Gamestate size bombs board winState)
 
 -- if there are any uncovered bombs, the game is lost
 checkLossCondition :: Game -> Game
-checkLossCondition (Gamestate size bombs board winState)
-  | any revBomb (concat board) = (Gamestate size bombs board Loss)
-  | otherwise = (Gamestate size bombs board winState)
+checkLossCondition (Gamestate size bombs board winState) =
+  if (any revBomb (concat board))
+  then (Gamestate size bombs board Loss)
+  else (Gamestate size bombs board winState)
   where
     revBomb :: Cell -> Bool
     revBomb (CellC Bomb Uncovered _) = True
     revBomb _ = False
-  
+
 
 -- should count all the bombs on the board
 countBombsFn :: Board -> Location -> Int
