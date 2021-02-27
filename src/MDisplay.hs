@@ -46,14 +46,16 @@ makeDisplayBoard (Gamestate (x, y) bombs board) = flatBoard
     flatBoard    :: [Char]
     charBoard    = map (map cellToChar) board
     zippedBoard  = zip ['a'..] charBoard
-    splicedBoard = foldr (\(label, row) acc -> (label:row):acc) zippedBoard [[]]
+    splicedBoard = foldr (\pair acc -> (compressPair pair):acc) [] zippedBoard
     spreadBoard  = map (intersperse ' ') splicedBoard
     linedBoard   = intersperse "\n" splicedBoard
     flatBoard    = concat linedBoard
-
 
 cellToChar :: Cell -> Char
 cellToChar (CellC _ Covered _)          = 'X'
 cellToChar (CellC _ Flagged _)          = 'F'
 cellToChar (CellC (Clue 0) Uncovered _) = '0'
 cellToChar (CellC (Clue c) Uncovered _) = (show c) !! 0
+
+compressPair :: (Char, [Char]) -> [Char]
+compressPair (char, str) = char:str
