@@ -3,10 +3,11 @@ module Main where
 import MData
 import MGeneration
 import Interaction
---import MDisplay
+import MDisplay
 import System.IO
 import System.Random
 import Data.List
+import Data.Maybe (fromJust)
 
 {- How main will work
 - we make the game (do all the initilizaion, with difficulty, board, etc.
@@ -19,13 +20,13 @@ main = do
   xg <- newStdGen
   yg <- newStdGen
   game <- createGameDiff (xg, yg) 
-  --display board
+  display game --display board
   putStrLn "Your board is ready to play!"
   putStrLn "to quit (and lose), enter \"quit\""
   endedGame <- play game
   putStrLn "Thanks for playing!"
   putStrLn "do you want to play again? y or yes for yes, anything else for no"
-  again <-getLine
+  again <- getLine
   if again == "y" || again == "yes"
   then main
   else putStrLn "Please come again soon! \n Leaving game..."
@@ -47,18 +48,20 @@ createGameDiff gens = do
 --play function takes a game and will check the win (and lose) conditon on every call
 -- if the game has been won or lost, return
 play (Gamestate size bombs board winstate) = do
+  -- 
   if (winstate == Win)
   then do
     putStrLn "You Win"
     return (Gamestate size bombs board winstate)
   else do
+    -- Loss
     if winstate == Loss
     then do
         putStrLn "You Lose"
         return (Gamestate size bombs board winstate)
+    -- Input moves
     else do
-    --Show board here?
-        putStrLn (show board)
+        display (Gamestate size bombs board winstate)
         putStrLn "What move would you like to make flag (\"f\") or click (\"c\")?"
         move <- getLine
         if move == "quit"
@@ -81,22 +84,24 @@ play (Gamestate size bombs board winstate) = do
         --play updatedGame
 
 --doFlag will perform a flagging action on the location provided
-doFlag game = do 
+doFlag game = do
   putStrLn "To flag, we need a location."
   loc <- getLoc game
-  return game --flagGame game loc
+  -- flagGame game loc
+  return game
 
 --doClick will perform the click action on the location provided
 doClick game = do
   putStrLn "To click we need a location."
   loc <- getLoc game
-  return game --clickGame game loc
+  --clickGame game loc
+  return game 
 
 --getLoc helper for doFlag and doClick that gets a vlaid location from the user given a certain game
 getLoc game = do
   putStrLn "Please enter your x-coordinate"
   x <- getLine
-  if valid x game
+  if validx x game
   then do
     putStrLn "Please enter your y-coordinate"
     y <- getLine
@@ -106,9 +111,20 @@ getLoc game = do
   else getLoc game
 
 --valid takes a coordinate and game and verifies if it is valid
-valid:: String -> Game -> Boolean
-valid coord game = True
+validx:: String -> Game -> Boolean
+--valid coord game = True
+validx coord (Gamestate (xsz, ysz) bombs board winstate) = 
+  if (length coord == 1) && ((coord!!0) `elem` (take (xsz-1) ['a'..'z']))
+  then True
+  else False
+
+validy:: String -> Game -> Boolean
+--valid coord game = True
+validy coord (Gamestate (xsz, ysz) bombs board winstate) = 
+  if (length coord == 1) && ((coord!!0) `elem` (take (ysz-1) ['a'..'z']))
+  then True
+  else False
 
 --convert takes a string letter and converts to the correct int coordination representation
 convert:: String -> Int
-convert coord = 1
+convert coord = fromJust $ elemIndex (coord!!0) ['a'..'z']
