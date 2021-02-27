@@ -2,6 +2,7 @@ module Interaction where
 
 import MData
 import System.IO
+import System.List
 
 -- Pressing a cell
 -- Is it revealed?/is it a flag?
@@ -11,13 +12,38 @@ import System.IO
 -- Check for win condition
 --clickCell :: Board -> Location -> Board
 
---TODO change clicking a cell to work with a game and not board
+clickGame:: Game -> Locaiton -> Game
+clickGame (Gamestate size bombs board winState) loc =
+  checkCondition (Gamestate size bombs (click board loc) winState)
+  where checkCondition g = checkLossCondition $ checkWinCondition g
 
-clickGame game loc = game
+click:: Board -> Location -> Board
+click board loc = map (clickRow loc) board
+  where clickRow ::Location -> Row -> Row
+        clickRow loc row = map (\ (CellC cc cs cl) ->
+            if cl == loc
+            then clickCell (CellC cc cs cl)
+                            board loc
+            else (CellC cc cs cl)) row
 
+clickCell :: Cell -> Cell
+clickCell (CellC cc cs cl) =
+  if cs == Uncovered
+  then (CellC cc cs cl)
+  -- return a message saying that this location is already revealed
+  else if cs == Flagged
+  then (CellC cc cs cl)
+  -- return a message saying that this location has been flagged, must be unflagged to uncover.
+  else if cc == Bomb
+  then (CellC cc Uncovered cl)
+  -- when we check loss condition, it should say lost now (Bomb is uncovered)
+  else (CellC cc Uncovered cl)
+    -- uncover this cell, if the board is a win, checking the board will cahnge state.
+
+-- OLD CLICK W/ GAME --
 -- given a board and location, find the cell on the board to operate on.
 -- if the cell at loc is revealed then do nothing
-click :: Game -> Location -> Game
+{-click :: Game -> Location -> Game
 click (Gamestate size bombs board winState) loc =
       (Gamestate size bombs (map (clickRow loc) board) winState)
   where clickRow ::Location -> Row -> Row
@@ -34,6 +60,7 @@ click (Gamestate size bombs board winState) loc =
 -- I assume when we discover a bomb, we want to reset the state of the board after outputting a game over message.
 clickCell :: Cell -> Game -> Location -> Game
 clickCell (CellC cc cs cl) (Gamestate size bombs board winState) loc =
+
   if cs == Uncovered
   then (Gamestate size bombs board winState)
   -- return a message saying that this location is already revealed
@@ -48,15 +75,34 @@ clickCell (CellC cc cs cl) (Gamestate size bombs board winState) loc =
     (CellC cc cs cl)
     (Gamestate size bombs (revealSpread board [loc] []) winState)
     -- uncover this cell and change the state of everything that should be revealed.
-
+-}
 -- check win condition, if not met then reach just reveal the board spread.
 -- the win condition: # of non-bomb cells revealed + # of remaining uncovered bomb tiles = total tiles on the board.
-checkWinCondition :: Cell -> Game -> Game
-checkWinCondition (CellC cc cs cl) (Gamestate size bombs (l:ls) winState) =
+checkWinCondition :: Game -> Game
+checkWinCondition (Gamestate size bombs board winState)
+  | any unrevNonbomb (concat board) = (Gamestate size bombs board winState)
+  | otherwise (Gamestate size bombs board Win)
+  where 
+    unrevNonbomb :: Cell -> Bool
+    unrevNonbomb (CellC Clue Covered _) = True
+    unrevNonbomb _ = False
+  {--
   if ((countBombsFn (l:ls)) + (countRevealedCells (l:ls))) == (length l) * (length ls)
   then (Gamestate size bombs (l:ls) Win)
   -- TODO: win condition, terminate the function
   else (Gamestate size bombs (l:ls) winState)
+  --}
+
+-- if there are any uncovered bombs, the game is lost
+checkLossCondition :: Game -> Game
+checkLossCondition (Gamestate size bombs board winState)
+  | any revBomb (concat board) = (Gamestate size bombs board Loss)
+  | otherwise = (Gamestate size bombs board winState)
+  where
+    revBomb :: Cell -> Bool
+    revBomb (CellC Bomb Uncovered _) = True
+    revBomb _ = False
+  
 
 -- should count all the bombs on the board
 countBombsFn :: Board -> Location -> Int
