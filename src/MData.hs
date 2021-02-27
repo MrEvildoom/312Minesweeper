@@ -16,6 +16,7 @@ type Row = [Cell]
 data WinState = Win |
                 Loss |
                 Continue
+                deriving (Show,Eq)
 
 -- each Cell is a cell with the contents of the cell
 data Cell = CellC Content State Location-- add a location?, new type of either just Int or (Int,Int)
