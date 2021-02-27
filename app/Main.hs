@@ -16,56 +16,91 @@ main = do
   putStrLn "Welcome to Minesweeper!\nPlease enter a difficulty (easy, medium, hard): "
   xg <- newStdGen --to pass to other functions and make game without making it IO?
   yg <- newStdGen -- same ^
-  game <- createGameDiff --maybe edit for above reasons ^
+  game <- createGameDiff (xg, yg) --maybe edit for above reasons ^
   --display board
   putStrLn "Your board is ready to play!"
-  newBoard <- getClick -- don't have access to all the right things, and should make a game?
-  -- keep getting clicks?
+  putStrLn "to quit (and lose), enter \"quit\""
+  endedGame <- play game
+  putStrLn "Thanks for playing!"
+  putStrLn "do you want to play again? y or yes for yes, anything else for no"
+  again <-getLine
+  if again == "y" || again == "yes"
+  then main
+  else putStrLn "Please come again soon! \n Leaving game..."
 
 -- creates a game with a difficulty provided as input
-createGameDif = do
+createGameDif gens = do
   difficulty <- getLine
   -- makes the game or resets main to get a propper difficulty
   if difficulty == "easy"
-  then return makeGame Easy
+  then return makeGame Easy gens
   else if difficulty == "medium"
-  then return makeGame medium
+  then return makeGame Medium gens
   else if difficulty == "hard"
-  then return makeGame hard
+  then return makeGame Hard gens
   else
     putStrLn "Please enter a valid difficulty, one of easy, medium, or hard: "
     createGameDiff
-
--- gets a click from the user, verifies it is valid and remakes the board with the change
--- TODO: give this the game and add validations on the inputs
-getClick game = do
-  putStrLn "to click or (un)flag a location enter the coordinates, first enter an x: "
-  x <- getLine
-  if --check if x is in bound and convert to int?
-  then getClick game
-  else 
-    putStrLn "now enter a y: "
-    y <- getLine
-    if --check if y is in bound and convert to int?
-    then getClick game
-    else 
-      putStrLn "now enter a move (c or f): "
-      move <- getLine
-      if (move == "c")
-      then return click game (x,y) --need to convert to digits
-      else if (move == "f")
-      then return flag game (x,y) --need to convert to digits
-      else getClick game
   
 --play function takes a game and will check the win (and lose) conditon on every call
 -- if the game has been won or lost, return
 play (Gamestate size bombs board winstate) = do
   if (winstate == Win)
-  then putStrLn "You Win"
+  then
+    putStrLn "You Win"
+    return (Gamestate size bombs board winstate)
   else if (winstate == Loss)
-  then putStrLn "You Lose"
+  then
+    putStrLn "You Lose"
+    (Gamestate size bombs board winstate)
   else
-    --play the game
-    --get an input from the player (getClick?) updatedGame <- getClick game
-    --recursively call play with that new game play newgame
+    --Show board here?
+    putStrLn board
+    putStrLn "What move would you like to make flag (\"f\") or click (\"c\")?"
+    move <- getLine
+    if move == "quit"
+    then
+      putStrLn "quitting game..." 
+      return (Gamestate size bombs board Loss)
+    else if move == "f"
+    then
+      updatedGame <- doFlag
+    else if move == "c"
+    then
+      updatedGame <- doClick
+    else
+      putStrLn "Please enter a valid move: \"f\", \"c\", or \"quit\""
+      play (Gamestate size bombs board winstate)
+    -- recursively call play to get next move with the updated game
+    play updatedGame
 
+--doFlag will perform a flagging action on the location provided
+doFlag game = do
+  putStrLn "To flag, we need a location."
+  loc <- getLoc game
+  return flagGame game loc
+
+--doClick will perform the click action on the location provided
+doClick game = do
+  putStrLn "To click we need a location."
+  loc <- getLoc game
+  return clickGame game loc
+
+--getLoc helper for doFlag and doClick that gets a vlaid location from the user given a certain game
+getloc game = do
+  putStrLn "Please enter your x-coordinate"
+  x <- getLine
+  if valid x game
+  then
+    putStrLn "Please enter your y-coordinate"
+    y <- getLine
+    if valid y game
+    then return (convert x, convert y)
+    else getLoc game
+  else getLoc game
+
+--valid takes a coordinate and game and verifies if it is valid
+valid coord game = true
+
+--convert takes a string letter and converts to the correct int coordination representaiton
+convert coord = 1

@@ -11,7 +11,9 @@ import System.IO
 -- Check for win condition
 --clickCell :: Board -> Location -> Board
 
---TODO chance clicking a cell to work with a game and not board
+--TODO change clicking a cell to work with a game and not board
+
+clcikGame game loc = game
 
 -- Pressing a cell --
 -- given a board and location, find the cell on the board to operate on.
@@ -59,9 +61,10 @@ countRevealedCells xss = sum [1 | xs <- xss, x <- xs, (getState xss (x location)
 
 
 -- FLAGGING A CELL --
---TODO make work with game not board
-
-flagGame 
+--flags the locaiton and updates the game
+flagGame:: Game -> Location -> Game
+flagGame (Gamestate size bombs board winstate) loc = 
+  (Gamestate size bombs (flag board loc) winstate)
 
 -- given a board and location, flag the location, or unflag if it is already flagged
 -- if the cell at loc is revealed then do nothing
