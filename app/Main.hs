@@ -27,19 +27,21 @@ main = do
   putStrLn "Thanks for playing!"
   putStrLn "do you want to play again? y or yes for yes, anything else for no"
   again <- getLine
-  if again == "y" || again == "yes"
+  let lagain = map toLower again
+  if lagain == "y" || lagain == "yes"
   then main
   else putStrLn "Please come again soon! \n Leaving game..."
 
 -- creates a game with a difficulty provided as input
 createGameDiff gens = do
   difficulty <- getLine
+  let ldifficulty = map toLower difficulty
   -- makes the game or resets main to get a propper difficulty
-  if difficulty == "easy"
+  if ldifficulty == "easy"
   then return (makeGame Easy gens)
-  else if difficulty == "medium"
+  else if ldifficulty == "medium"
   then return (makeGame Medium gens)
-  else if difficulty == "hard"
+  else if ldifficulty == "hard"
   then return (makeGame Hard gens)
   else do
     putStrLn "Please enter a valid difficulty, one of easy, medium, or hard: "
@@ -64,16 +66,17 @@ play (Gamestate size bombs board winstate) = do
         display (Gamestate size bombs board winstate)
         putStrLn "What move would you like to make flag (\"f\") or click (\"c\")?"
         move <- getLine
-        if move == "quit"
+        let lmove = map toLower move
+        if lmove == "quit"
         then do
             putStrLn "quitting game..."
             return (Gamestate size bombs board Loss)
         else do
-            if move == "f"
+            if lmove == "f"
             then do
                 updatedGame <- doFlag (Gamestate size bombs board winstate)
                 play updatedGame
-            else if move == "c"
+            else if lmove == "c"
             then do
                 updatedGame <- doClick (Gamestate size bombs board winstate)
                 play updatedGame
@@ -99,12 +102,14 @@ doClick game = do
 getLoc game = do
   putStrLn "Please enter your x-coordinate"
   x <- getLine
-  if validx x game
+  let lx = map toLower x
+  if validx lx game
   then do
     putStrLn "Please enter your y-coordinate"
     y <- getLine
-    if validy y game
-    then return (convert x, convert y)
+    let ly = map toLower y
+    if validy ly game
+    then return (convert lx, convert ly)
     else getLoc game
   else getLoc game
 
@@ -112,14 +117,14 @@ getLoc game = do
 validx:: String -> Game -> Bool
 --valid coord game = True
 validx coord (Gamestate (xsz, ysz) bombs board winstate) =
-  if (length coord == 1) && ((coord!!0) `elem` (take (xsz-1) ['a'..'z']))
+  if (length coord == 1) && ((coord!!0) `elem` (take (xsz) ['a'..'z']))
   then True
   else False
 
 validy:: String -> Game -> Bool
 --valid coord game = True
 validy coord (Gamestate (xsz, ysz) bombs board winstate) =
-  if (length coord == 1) && ((coord!!0) `elem` (take (ysz-1) ['a'..'z']))
+  if (length coord == 1) && ((coord!!0) `elem` (take (ysz) ['a'..'z']))
   then True
   else False
 

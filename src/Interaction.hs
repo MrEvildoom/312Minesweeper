@@ -10,7 +10,8 @@ import Data.List
 -- What is revealed
 -- Change state of all to be revealed
 -- Check for win condition
---clickCell :: Board -> Location -> Board
+
+-- TODO: fix click to properly reveal 
 
 clickGame:: Game -> Location -> Game
 clickGame (Gamestate size bombs board winState) loc =
@@ -38,6 +39,7 @@ clickCell (CellC cc cs cl) =
   then (CellC cc Uncovered cl) --TODO: should these be different?
   -- when we check loss condition, it should say lost now (Bomb is uncovered)
   else (CellC cc Uncovered cl)
+    -- this needs to also somehow trigger revealSpread
     -- uncover this cell, if the board is a win, checking the board will cahnge state.
 
 -- check win condition, if not met then reach just reveal the board spread.
@@ -81,6 +83,20 @@ countRevealedCells :: Board -> Location -> Int
 countRevealedCells board loc = sum [1 | row <- board,
                                         cell <- row,
                                         (getState board loc) == Uncovered]
+
+--prints a message saying location is flagged
+flagMsg = do
+  putStrLn "This cell is flagged, please unflag before clicking"
+
+--prints a message indicating a bomb was pressed
+bombMsg = do
+  putStrLn "You pressed a bomb.."
+
+--prints a message stating that the locaiton is already revealed
+revealMsg = do
+  putStrLn "This cell is already revealed, try another one"
+
+
 
 -- FLAGGING A CELL --
 --flags the locaiton and updates the game
