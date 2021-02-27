@@ -81,7 +81,7 @@ play (Gamestate size bombs board winstate) = do
         --play updatedGame
 
 --doFlag will perform a flagging action on the location provided
-doFlag game = do
+doFlag game = do 
   putStrLn "To flag, we need a location."
   loc <- getLoc game
   return game --flagGame game loc
