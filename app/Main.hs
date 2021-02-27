@@ -6,6 +6,7 @@ import Interaction
 --import MDisplay
 import System.IO
 import System.Random
+import Data.List
 
 {- How main will work
 - we make the game (do all the initilizaion, with difficulty, board, etc.
@@ -15,9 +16,9 @@ import System.Random
 main :: IO ()
 main = do
   putStrLn "Welcome to Minesweeper!\nPlease enter a difficulty (easy, medium, hard): "
-  xg <- newStdGen --to pass to other functions and make game without making it IO?
-  yg <- newStdGen -- same ^
-  game <- createGameDiff (xg, yg) --maybe edit for above reasons ^
+  xg <- newStdGen
+  yg <- newStdGen
+  game <- createGameDiff (xg, yg) 
   --display board
   putStrLn "Your board is ready to play!"
   putStrLn "to quit (and lose), enter \"quit\""
@@ -105,7 +106,9 @@ getLoc game = do
   else getLoc game
 
 --valid takes a coordinate and game and verifies if it is valid
+valid:: String -> Game -> Boolean
 valid coord game = True
 
---convert takes a string letter and converts to the correct int coordination representaiton
+--convert takes a string letter and converts to the correct int coordination representation
+convert:: String -> Int
 convert coord = 1
