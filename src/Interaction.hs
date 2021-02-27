@@ -13,7 +13,7 @@ import System.IO
 
 --TODO change clicking a cell to work with a game and not board
 
-clcikGame game loc = game
+clickGame game loc = game
 
 -- Pressing a cell --
 -- given a board and location, find the cell on the board to operate on.
