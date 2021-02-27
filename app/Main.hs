@@ -21,7 +21,7 @@ main = do
   xg <- newStdGen
   yg <- newStdGen
   game <- createGameDiff (xg, yg)
-  display game --display board
+  --display game
   putStrLn "Your board is ready to play!"
   putStrLn "to quit (and lose), enter \"quit\""
   endedGame <- play game
@@ -51,7 +51,6 @@ createGameDiff gens = do
 --play function takes a game and will check the win (and lose) conditon on every call
 -- if the game has been won or lost, return
 play (Gamestate size bombs board winstate) = do
-  --
   if (winstate == Win)
   then do
     putStrLn "You Win"
@@ -84,8 +83,7 @@ play (Gamestate size bombs board winstate) = do
             else do
                 putStrLn "Please enter a valid move: \"f\", \"c\", or \"quit\""
                 play (Gamestate size bombs board winstate)
-    -- recursively call play to get next move with the updated game
-        --play updatedGame
+    
 
 --doFlag will perform a flagging action on the location provided
 doFlag game = do
