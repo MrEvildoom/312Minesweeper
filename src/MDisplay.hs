@@ -30,13 +30,13 @@ display g = putStrLn ((makeInfoLine     g) ++
                       (makeDisplayBoard g))
 
 makeInfoLine :: Game -> [Char]
-makeInfoLine (Gamestate _ bombs _) = (show bombs) ++ " Bombs \n"
+makeInfoLine (Gamestate _ bombs _ _) = (show bombs) ++ " Bombs \n"
 
 makeTopLine :: Game -> [Char]
-makeTopLine (Gamestate (x, _) _ _) = ' ':' ':(intersperse ' ' (take x ['a'..])) ++ "\n"
+makeTopLine (Gamestate (x, _) _ _ _) = ' ':' ':(intersperse ' ' (take x ['a'..])) ++ "\n"
 
 makeDisplayBoard :: Game -> [Char]
-makeDisplayBoard (Gamestate (x, y) bombs board) = flatBoard
+makeDisplayBoard (Gamestate (x, y) bombs board _) = flatBoard
   where
     charBoard    :: [[Char]]
     zippedBoard  :: [(Char, [Char])]
