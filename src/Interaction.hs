@@ -35,12 +35,21 @@ shouldReveal:: Board -> Location -> Bool
 shouldReveal b loc = 
   ((getContent b loc) == Clue 0) && ((getState b loc) == Covered)
 
+--clicks a safe spot on the board for the user as a hint.
+assistClick :: Game -> Game
+assistClick (Gamestate size bombs board winState) = 
+    clickGame (Gamestate size bombs board winState) (getSafeLocation (concat board))
+
+getSafeLocation :: [Cell] -> Location
+getSafeLocation [] = (-1,0) -- this should never happen
+getSafeLocation ((CellC cc cs cl):t) 
+     | (cc /= Bomb && cs == Covered) = cl
+     | otherwise = getSafeLocation(t)
+
 --flags a bomb for the user as a hint.
 assistFlag :: Game -> Game
 assistFlag (Gamestate size bombs board winState) = 
-    checkWinCondition(Gamestate size bombs (flag board (findBomb board)) winState)
-     where findBomb b = getBombLocation(concat board)
-                  
+	flagGame(Gamestate size bombs board winState) (getBombLocation (concat board))
 
 getBombLocation :: [Cell] -> Location
 getBombLocation [] = (-1,0) -- this should never happen
@@ -118,7 +127,7 @@ countRevealedCells board loc = sum [1 | row <- board,
 --TODO: make flagging a cell decrement the number of bombs and unflagging a cell increment
 flagGame:: Game -> Location -> Game
 flagGame (Gamestate size bombs board winstate) loc =
-  (Gamestate size bombs (flag board loc) winstate)
+  checkWinCondition(Gamestate size bombs (flag board loc) winstate)
 
 -- given a board and location, flag the location, or unflag if it is already flagged
 -- if the cell at loc is revealed then do nothing
@@ -132,12 +141,12 @@ flag b loc = map (flagRow loc) b
 
 -- given a Cell, set its state to flagged (or unflag if flagged) if it is not revealed
 flagCell :: Cell -> Cell
-flagCell (CellC cc cs (x,y)) =
+flagCell (CellC cc cs cl) =
   if cs == Uncovered
-  then (CellC cc cs (x,y)) --in game could output message "already revealed"
+  then (CellC cc cs cl) --in game could output message "already revealed"
   else if cs == Flagged
-  then (CellC cc Covered (x,y))
-  else (CellC cc Flagged (x,y))
+  then (CellC cc Covered cl)
+  else (CellC cc Flagged cl)
 
 -- takes a board and a location of a blank cell, returns a board with cells around it revealed
 revealSpread :: Board -> [Location] -> [Location] -> Board
