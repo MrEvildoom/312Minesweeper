@@ -35,7 +35,8 @@ data State = Covered |
 -- Location identifies a particular Cell on the board
 type Location = (Int, Int)
 
-data Difficulty = Easy |
+data Difficulty = VeryEasy |
+                  Easy |
                   Medium |
                   Hard
                   deriving (Show,Eq)

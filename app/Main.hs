@@ -17,7 +17,7 @@ import Data.Char
 
 main :: IO ()
 main = do
-  putStrLn "Welcome to Minesweeper!\nPlease enter a difficulty (easy, medium, hard): "
+  putStrLn "Welcome to Minesweeper!\nPlease enter a difficulty (very easy, easy, medium, hard): "
   xg <- newStdGen
   yg <- newStdGen
   game <- createGameDiff (xg, yg)
@@ -38,7 +38,9 @@ createGameDiff gens = do
   difficulty <- getLine
   let ldifficulty = map toLower difficulty
   -- makes the game or resets main to get a propper difficulty
-  if ldifficulty == "easy"
+  if ldifficulty == "very easy"
+  then return (makeGame VeryEasy gens)
+  else if ldifficulty == "easy"
   then return (makeGame Easy gens)
   else if ldifficulty == "medium"
   then return (makeGame Medium gens)
