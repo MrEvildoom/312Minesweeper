@@ -145,20 +145,20 @@ clickMsg board loc = do
     else do
       if (getContent board loc) == Bomb
       then do bombMsg
-      else do putStrLn "You found a valid space, good job!"
+      else do putStrLn "You found a valid space, good job!\n"
 
 
 --prints a message saying location is flagged
 clickFlagMsg = do
-  putStrLn "This cell is flagged, please unflag before clicking"
+  putStrLn "This cell is flagged, please unflag before clicking\n"
 
 --prints a message indicating a bomb was pressed
 bombMsg = do
-  putStrLn "You pressed a bomb.."
+  putStrLn "You pressed a bomb..\n"
 
 --prints a message stating that the locaiton is already revealed
 revealMsg = do
-  putStrLn "This cell is already revealed, try another one"
+  putStrLn "This cell is already revealed, try another one\n"
 
 --prints a message saying if the cell was flagged, unflagged, or could not be flagged
 flagMsg board loc = do
@@ -171,7 +171,7 @@ flagMsg board loc = do
 
 
 unflagMsg = do
-  putStrLn "You unflagged the cell at the specified location"
+  putStrLn "You unflagged the cell at the specified location\n"
 
 flagingMsg = do
-  putStrLn "You flagged the cell at the specified location"
+  putStrLn "You flagged the cell at the specified location\n"
