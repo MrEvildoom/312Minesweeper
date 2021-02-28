@@ -35,7 +35,10 @@ makeInfoLine (Gamestate _ bombs _ _) = (show bombs) ++ " Bombs \n"
 -- TODO: number of flags, number of unrevealed spaces
 -- something like length filter isflag? concat board
 makeTopLine :: Game -> [Char]
-makeTopLine (Gamestate (x, _) _ _ _) = ' ':' ':(intersperse ' ' (take x ['a'..])) ++ "\n"
+makeTopLine (Gamestate (x, _) _ _ _) = ' ':' ':
+                                       (intersperse ' ' (take x ['a'..])) ++
+                                       "\n"
+                                    -- ++ replicate (2+(2*x)) '_' ++ "\n"
 
 makeDisplayBoard :: Game -> [Char]
 makeDisplayBoard (Gamestate (x, y) bombs board _) = flatBoard
@@ -46,10 +49,11 @@ makeDisplayBoard (Gamestate (x, y) bombs board _) = flatBoard
     spreadBoard  :: [[Char]]
     linedBoard   :: [[Char]]
     flatBoard    :: [Char]
-    charBoard    = map (map cellToChar) board
-    zippedBoard  = zip ['a'..] charBoard
+    charBoard    = map (map cellToChar) board      -- convert to chars
+    spreadBoard  = map (intersperse ' ') charBoard -- add spaces
+    zippedBoard  = zip ['a'..] spreadBoard
     splicedBoard = foldr (\pair acc -> (compressPair pair):acc) [] zippedBoard
-    spreadBoard  = map (intersperse ' ') splicedBoard --
+
     linedBoard   = intersperse "\n" splicedBoard
     flatBoard    = concat linedBoard
 
