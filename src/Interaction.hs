@@ -35,6 +35,28 @@ shouldReveal:: Board -> Location -> Bool
 shouldReveal b loc = 
   ((getContent b loc) == Clue 0) && ((getState b loc) == Covered)
 
+--clicks a safe spot on the board for the user as a hint.
+assistClick :: Game -> Game
+assistClick (Gamestate size bombs board winState) = 
+    clickGame (Gamestate size bombs board winState) (getSafeLocation (concat board))
+
+getSafeLocation :: [Cell] -> Location
+getSafeLocation [] = (-1,0) -- this should never happen
+getSafeLocation ((CellC cc cs cl):t) 
+     | (cc /= Bomb && cs == Covered) = cl
+     | otherwise = getSafeLocation(t)
+
+--flags a bomb for the user as a hint.
+assistFlag :: Game -> Game
+assistFlag (Gamestate size bombs board winState) = 
+	flagGame(Gamestate size bombs board winState) (getBombLocation (concat board))
+
+getBombLocation :: [Cell] -> Location
+getBombLocation [] = (-1,0) -- this should never happen
+getBombLocation ((CellC cc cs cl):t) 
+     | (cc == Bomb && cs /= Flagged) = cl
+     | otherwise = getBombLocation(t)
+
 clickCell :: Cell -> Cell
 clickCell (CellC cc cs cl) =
   if cs == Uncovered
@@ -52,9 +74,10 @@ clickCell (CellC cc cs cl) =
 
 -- check win condition, if not met then reach just reveal the board spread.
 -- the win condition: # of non-bomb cells revealed + # of remaining uncovered bomb tiles = total tiles on the board.
+-- if all bombs are flagged, a win is achieved!
 checkWinCondition :: Game -> Game
 checkWinCondition (Gamestate size bombs board winState) =
-  if (any unrevNonbomb (concat board))
+  if (any unrevNonbomb (concat board) && not (checkAllBombsFlagged (concat board)))
   then (Gamestate size bombs board winState)
   else (Gamestate size bombs board Win)
   where
@@ -67,6 +90,13 @@ checkWinCondition (Gamestate size bombs board winState) =
   -- TODO: win condition, terminate the function
   else (Gamestate size bombs (l:ls) winState)
   --}
+
+checkAllBombsFlagged :: [Cell] -> Bool
+checkAllBombsFlagged b = 
+	foldr (&&) True (map (\ (CellC cc cs cl) ->
+                                cc == Bomb && cs == Flagged) 
+								(filter (\ (CellC cc cs cl) ->
+                                         cc == Bomb) b))
 
 -- if there are any uncovered bombs, the game is lost
 checkLossCondition :: Game -> Game
@@ -109,7 +139,7 @@ countFlaggedCells board loc = sum [1 | row <- board,
 --TODO: make flagging a cell decrement the number of bombs and unflagging a cell increment
 flagGame:: Game -> Location -> Game
 flagGame (Gamestate size bombs board winstate) loc =
-  (Gamestate size bombs (flag board loc) winstate)
+  checkWinCondition(Gamestate size bombs (flag board loc) winstate)
 
 -- given a board and location, flag the location, or unflag if it is already flagged
 -- if the cell at loc is revealed then do nothing
