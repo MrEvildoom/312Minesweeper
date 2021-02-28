@@ -10,8 +10,7 @@ import Data.List
 -- What is revealed
 -- Change state of all to be revealed
 -- Check for win condition
-
--- TODO: fix click to properly reveal 
+--clickCell :: Board -> Location -> Board
 
 clickGame:: Game -> Location -> Game
 clickGame (Gamestate size bombs board winState) loc =
@@ -19,21 +18,13 @@ clickGame (Gamestate size bombs board winState) loc =
   where checkCondition g = checkLossCondition $ checkWinCondition g
 
 click:: Board -> Location -> Board
-click board loc = 
-  if (shouldReveal board loc)
-  then revealSpread board [loc] []
-  else map (clickRow loc) board
-    where clickRow ::Location -> Row -> Row
-          clickRow loc row = map (\ (CellC cc cs cl) ->
+click board loc = map (clickRow loc) board
+  where clickRow ::Location -> Row -> Row
+        clickRow loc row = map (\ (CellC cc cs cl) ->
                                   if cl == loc
                                   then clickCell (CellC cc cs cl)
                                   else (CellC cc cs cl))
                                 row
-
---returns true if cell should reveal beightbors (Clue 0 and not already revealed)
-shouldReveal:: Board -> Location -> Bool
-shouldReveal b loc = 
-  ((getContent b loc) == Clue 0) && ((getState b loc) == Covered)
 
 clickCell :: Cell -> Cell
 clickCell (CellC cc cs cl) =
@@ -47,7 +38,6 @@ clickCell (CellC cc cs cl) =
   then (CellC cc Uncovered cl) --TODO: should these be different?
   -- when we check loss condition, it should say lost now (Bomb is uncovered)
   else (CellC cc Uncovered cl)
-    -- this needs to also somehow trigger revealSpread
     -- uncover this cell, if the board is a win, checking the board will cahnge state.
 
 -- check win condition, if not met then reach just reveal the board spread.
