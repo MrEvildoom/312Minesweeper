@@ -66,7 +66,7 @@ play (Gamestate size bombs board winstate) = do
     -- Input moves
     else do
         display (Gamestate size bombs board winstate)
-        putStrLn "What move would you like to make flag (\"f\") or click (\"c\")?"
+        putStrLn "\nWhat move would you like to make flag (\"f\") or click (\"c\")?"
         move <- getLine
         let lmove = map toLower move
         if lmove == "quit"
@@ -89,14 +89,14 @@ play (Gamestate size bombs board winstate) = do
 
 --doFlag will perform a flagging action on the location provided
 doFlag (Gamestate size bombs board winstate) = do
-  putStrLn "To flag, we need a location."
+  putStrLn "\nTo flag, we need a location."
   loc <- getLoc (Gamestate size bombs board winstate)
   flagMsg board loc
   return (flagGame (Gamestate size bombs board winstate) loc)
 
 --doClick will perform the click action on the location provided
 doClick (Gamestate size bombs board winstate) = do
-  putStrLn "To click we need a location."
+  putStrLn "\nTo click we need a location."
   loc <- getLoc (Gamestate size bombs board winstate)
   clickMsg board loc
   return (clickGame (Gamestate size bombs board winstate) loc)
