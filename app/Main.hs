@@ -23,7 +23,7 @@ main = do
   game <- createGameDiff (xg, yg)
   --display game
   putStrLn "Your board is ready to play!"
-  putStrLn "to quit (and lose), enter \"quit\""
+  putStrLn "to quit (and lose), enter \"quit\"\n"
   endedGame <- play game
   putStrLn "Thanks for playing!"
   putStrLn "do you want to play again? y or yes for yes, anything else for no"
@@ -31,7 +31,7 @@ main = do
   let lagain = map toLower again
   if lagain == "y" || lagain == "yes"
   then main
-  else putStrLn "Please come again soon! \n Leaving game..."
+  else putStrLn "Please come again soon! \nLeaving game..."
 
 -- creates a game with a difficulty provided as input
 createGameDiff gens = do

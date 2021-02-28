@@ -92,6 +92,18 @@ countRevealedCells board loc = sum [1 | row <- board,
                                         cell <- row,
                                         (getState board loc) == Uncovered]
 
+-- should count all the currently unrevealed cells on the board
+countUnrevealedCells :: Board -> Location -> Int
+countUnrevealedCells board loc = sum [1 | row <- board,
+                                          cell <- row,
+                                          (getState board loc) == Covered]
+
+-- should count all the currently flagged cells on the board
+countFlaggedCells :: Board -> Location -> Int
+countFlaggedCells board loc = sum [1 | row <- board,
+                                       cell <- row,
+                                       (getState board loc) == Flagged]
+
 -- FLAGGING A CELL --
 --flags the locaiton and updates the game
 --TODO: make flagging a cell decrement the number of bombs and unflagging a cell increment
