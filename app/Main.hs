@@ -53,6 +53,7 @@ createGameDiff gens = do
 --play function takes a game and will check the win (and lose) conditon on every call
 -- if the game has been won or lost, return
 play (Gamestate size bombs board winstate) = do
+  display (Gamestate size bombs board winstate)
   if (winstate == Win)
   then do
     putStrLn "You Win"
@@ -65,7 +66,6 @@ play (Gamestate size bombs board winstate) = do
         return (Gamestate size bombs board winstate)
     -- Input moves
     else do
-        display (Gamestate size bombs board winstate)
         putStrLn "\nWhat move would you like to make flag (\"f\") or click (\"c\")?"
         move <- getLine
         let lmove = map toLower move
