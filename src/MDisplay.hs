@@ -54,6 +54,7 @@ makeDisplayBoard (Gamestate (x, y) bombs board _) = flatBoard
 cellToChar :: Cell -> Char
 cellToChar (CellC _ Covered _)          = 'X'
 cellToChar (CellC _ Flagged _)          = 'F'
+cellToChar (CellC Bomb Uncovered _)     = '!'
 cellToChar (CellC (Clue 0) Uncovered _) = '0'
 cellToChar (CellC (Clue c) Uncovered _) = (show c) !! 0
 
