@@ -35,6 +35,19 @@ shouldReveal:: Board -> Location -> Bool
 shouldReveal b loc = 
   ((getContent b loc) == Clue 0) && ((getState b loc) == Covered)
 
+--flags a bomb for the user as a hint.
+assistFlag :: Game -> Game
+assistFlag (Gamestate size bombs board winState) = 
+    checkWinCondition(Gamestate size bombs (flag board (findBomb board)) winState)
+     where findBomb b = getBombLocation(concat board)
+                  
+
+getBombLocation :: [Cell] -> Location
+getBombLocation [] = (-1,0) -- this should never happen
+getBombLocation ((CellC cc cs cl):t) 
+     | (cc == Bomb && cs /= Flagged) = cl
+     | otherwise = getBombLocation(t)
+
 clickCell :: Cell -> Cell
 clickCell (CellC cc cs cl) =
   if cs == Uncovered
@@ -52,9 +65,10 @@ clickCell (CellC cc cs cl) =
 
 -- check win condition, if not met then reach just reveal the board spread.
 -- the win condition: # of non-bomb cells revealed + # of remaining uncovered bomb tiles = total tiles on the board.
+-- if all bombs are flagged, a win is achieved!
 checkWinCondition :: Game -> Game
 checkWinCondition (Gamestate size bombs board winState) =
-  if (any unrevNonbomb (concat board))
+  if (any unrevNonbomb (concat board) && not (checkAllBombsFlagged (concat board)))
   then (Gamestate size bombs board winState)
   else (Gamestate size bombs board Win)
   where
@@ -67,6 +81,13 @@ checkWinCondition (Gamestate size bombs board winState) =
   -- TODO: win condition, terminate the function
   else (Gamestate size bombs (l:ls) winState)
   --}
+
+checkAllBombsFlagged :: [Cell] -> Bool
+checkAllBombsFlagged b = 
+	foldr (&&) True (map (\ (CellC cc cs cl) ->
+                                cc == Bomb && cs == Flagged) 
+								(filter (\ (CellC cc cs cl) ->
+                                         cc == Bomb) b))
 
 -- if there are any uncovered bombs, the game is lost
 checkLossCondition :: Game -> Game
@@ -111,12 +132,12 @@ flag b loc = map (flagRow loc) b
 
 -- given a Cell, set its state to flagged (or unflag if flagged) if it is not revealed
 flagCell :: Cell -> Cell
-flagCell (CellC cc cs cl) =
+flagCell (CellC cc cs (x,y)) =
   if cs == Uncovered
-  then (CellC cc cs cl) --in game could output message "already revealed"
+  then (CellC cc cs (x,y)) --in game could output message "already revealed"
   else if cs == Flagged
-  then (CellC cc Covered cl)
-  else (CellC cc Flagged cl)
+  then (CellC cc Covered (x,y))
+  else (CellC cc Flagged (x,y))
 
 -- takes a board and a location of a blank cell, returns a board with cells around it revealed
 revealSpread :: Board -> [Location] -> [Location] -> Board

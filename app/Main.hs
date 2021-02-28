@@ -66,7 +66,7 @@ play (Gamestate size bombs board winstate) = do
         return (Gamestate size bombs board winstate)
     -- Input moves
     else do
-        putStrLn "\nWhat move would you like to make flag (\"f\") or click (\"c\")?"
+        putStrLn "\nWhat move would you like to make flag (\"f\"), click (\"c\"), or receive a hint (\"h\")?"
         move <- getLine
         let lmove = map toLower move
         if lmove == "quit"
@@ -82,10 +82,27 @@ play (Gamestate size bombs board winstate) = do
             then do
                 updatedGame <- doClick (Gamestate size bombs board winstate)
                 play updatedGame
+			else if lmove == "h"
+			then do 
+				putStrLn "\nWould you like to have a bomb flagged for you (\"b\"),or have a safe spot clicked for you (\"c\")?"
+				hint <- getLine
+				if (hint == "b")
+				then do 
+					updatedGame <- flagBombLocation (Gamestate size bombs board winstate)
+					play updatedGame
+				else do 
+					-- click a random safe spot
+					putStrLn "\nawefwa?"
+					play (Gamestate size bombs board winstate)
+				
             else do
                 putStrLn "Please enter a valid move: \"f\", \"c\", or \"quit\""
                 play (Gamestate size bombs board winstate)
     
+--flagBombLocation will flag a bomb on the board for the user (currently flags only one bomb)
+flagBombLocation (Gamestate size bombs board winstate) = do
+  putStrLn "\nIf there are bombs remaining, one more will have been flagged for you, otherwise you have already flagged all bombs!"
+  return (assistFlag (Gamestate size bombs board winstate))
 
 --doFlag will perform a flagging action on the location provided
 doFlag (Gamestate size bombs board winstate) = do
