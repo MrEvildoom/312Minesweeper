@@ -10,11 +10,12 @@ Displays, when printed, look like this
 
   00 Bombs   -- infoLine
   a b c d e  -- topline
-a X X F 1 0
-b X X 2 0 0
-c X F 1 1 1
-d X X X X X
-e X X X X X
+  ---------
+a|X F 1 0
+b|X X 2 0 0
+c|X F 1 1 1
+d|X X X X X
+e|X X X X X
 
 input "(x, y, c)"
    or "(x, y, r)"
@@ -31,7 +32,8 @@ display g = putStrLn ((makeInfoLine     g) ++
 
 makeInfoLine :: Game -> [Char]
 makeInfoLine (Gamestate _ bombs _ _) = (show bombs) ++ " Bombs \n"
-
+-- TODO: number of flags, number of unrevealed spaces
+-- something like length filter isflag? concat board
 makeTopLine :: Game -> [Char]
 makeTopLine (Gamestate (x, _) _ _ _) = ' ':' ':(intersperse ' ' (take x ['a'..])) ++ "\n"
 
@@ -47,7 +49,7 @@ makeDisplayBoard (Gamestate (x, y) bombs board _) = flatBoard
     charBoard    = map (map cellToChar) board
     zippedBoard  = zip ['a'..] charBoard
     splicedBoard = foldr (\pair acc -> (compressPair pair):acc) [] zippedBoard
-    spreadBoard  = map (intersperse ' ') splicedBoard
+    spreadBoard  = map (intersperse ' ') splicedBoard --
     linedBoard   = intersperse "\n" splicedBoard
     flatBoard    = concat linedBoard
 
@@ -58,4 +60,4 @@ cellToChar (CellC (Clue 0) Uncovered _) = '0'
 cellToChar (CellC (Clue c) Uncovered _) = (show c) !! 0
 
 compressPair :: (Char, [Char]) -> [Char]
-compressPair (char, str) = char:str
+compressPair (char, str) = char:'|':str
