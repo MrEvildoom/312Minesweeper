@@ -42,11 +42,11 @@ clickBest (Gamestate size bombs board winState) = clickGame (Gamestate size bomb
 
 --given a game, returns a list of locations clicked to solve the game in fewest clicks and the ending game
 bestSolver:: Game -> [Location] -> (Game, [Location])
-bestSolver (Gamestate size bombs board winState) locs =
-  if winState == Continue
-  then bestSolver (clickBest (Gamestate size bombs board winState)) ((bestLocation board):locs)
-  else ((Gamestate size bombs board winState), locs)
-
+bestSolver game locs = solve (removeInvalidGame game) locs
+  where solve (Gamestate size bombs board winState) locs = 
+          if winState == Continue
+          then bestSolver (clickBest (Gamestate size bombs board winState)) ((bestLocation board):locs)
+          else ((Gamestate size bombs board winState), locs)
 
 --clicks a safe spot on the board for the user as a hint.
 assistClick :: Game -> Game
@@ -173,6 +173,24 @@ flagCell (CellC cc cs cl) =
   then (CellC cc Covered cl)
   else (CellC cc Flagged cl)
 
+--removes all invalid flags from the game
+removeInvalidGame:: Game -> Game
+removeInvalidGame (Gamestate size bombs board winState) = 
+  (Gamestate size bombs (removeInvalid board (invalidFlags board)) winState)
+
+--removes invalid flags from the board
+removeInvalid:: Board -> [Location] -> Board
+removeInvalid b [] = b
+removeInvalid b (l:ls) = removeInvalid (flag b l) ls
+
+--returns list of invalid falg locations
+invalidFlags:: Board -> [Location]
+invalidFlags b = map (getLocation) (filter invalidFlag (concat b))
+  where invalidFlag:: Cell -> Bool
+        invalidFlag (CellC cc cs cl) = (cs == Flagged) && (cc /= Bomb)
+        getLocation:: Cell -> Location
+        getLocation (CellC cc cs cl) = cl
+
 -- takes a board and a location of a blank cell, returns a board with cells around it revealed
 revealSpread :: Board -> [Location] -> [Location] -> Board
 revealSpread b [] _ = b
@@ -211,9 +229,9 @@ revealLocations :: Board -> [Location] -> [Location] -> [Location]
 revealLocations b [] oldls = oldls
 revealLocations b (l:ls) oldls
   | l `elem` oldls = revealLocations b ls oldls -- discard if revealed
-  | (getContent b l) == Bomb = revealLocations b ls oldls
-  | (getState b l) == Flagged = revealLocations b ls (oldls)
-  | (getState b l) == Uncovered = revealLocations b ls (oldls)
+  | (getContent b l) == Bomb = revealLocations b ls oldls -- dont count bombs
+  | (getState b l) == Flagged = revealLocations b ls (oldls) -- dont count if flagged, might need to remove if given a game where flags are on clues
+  | (getState b l) == Uncovered = revealLocations b ls (oldls) -- dont count if already revealed
   | (getContent b l) == Clue 0 = revealLocations b
                             -- uncover cell
                             (getRevNeighbors ++ ls)
@@ -228,11 +246,11 @@ revealLocations b (l:ls) oldls
     revealable loc = ((getContent b loc) /= Bomb) && ((getState b loc) == Covered)
 
 
-{-
+{- for testing the best click and solver
 xg <- newStdGen
 yg <- newStdGen
 g = (xg, yg)
-game = makeGame Hard g
+game = makeGame Easy g
 display game
 slv = bestSolver game []
 display (fst slv)
