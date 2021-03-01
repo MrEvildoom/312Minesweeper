@@ -39,6 +39,15 @@ shouldReveal b loc =
 clickBest:: Game -> Game
 clickBest (Gamestate size bombs board winState) = clickGame (Gamestate size bombs board winState) (bestLocation board)
 
+
+--given a game, returns a list of locations clicked to solve the game in fewest clicks and the ending game
+bestSolver:: Game -> [Location] -> (Game, [Location])
+bestSolver (Gamestate size bombs board winState) locs =
+  if winState == Continue
+  then bestSolver (clickBest (Gamestate size bombs board winState)) ((bestLocation board):locs)
+  else ((Gamestate size bombs board winState), locs)
+
+
 --clicks a safe spot on the board for the user as a hint.
 assistClick :: Game -> Game
 assistClick (Gamestate size bombs board winState) =
@@ -182,25 +191,29 @@ revealSpread b (l:ls) oldls
     revealable :: Location -> Bool
     revealable loc = ((getContent b loc) /= Bomb) && ((getState b loc) == Covered)
 
+--gets the best location to press on the board
 bestLocation:: Board -> Location
 bestLocation board = findBest board (concat board) (0, (0,0))
 
+--returns a best location
 findBest _ [] acc = snd acc
 findBest board ((CellC cc cs cl):cells) acc = findBest board cells (isBetter board cl acc)
 
-
-
+--checks if the current acc in findBest is better thatn the current location
 isBetter board loc (maxr, locr) = 
-  if reveals > maxr 
+  if reveals > maxr && (getContent board loc) /= Bomb
   then (reveals, loc)
   else (maxr, locr)
     where reveals = (length (revealLocations board [loc] []))
 
---gives the list of locations that is revealed
+--gives the list of locations that is revealed if a cell were to be pressed
 revealLocations :: Board -> [Location] -> [Location] -> [Location]
 revealLocations b [] oldls = oldls
 revealLocations b (l:ls) oldls
   | l `elem` oldls = revealLocations b ls oldls -- discard if revealed
+  | (getContent b l) == Bomb = revealLocations b ls oldls
+  | (getState b l) == Flagged = revealLocations b ls (oldls)
+  | (getState b l) == Uncovered = revealLocations b ls (oldls)
   | (getContent b l) == Clue 0 = revealLocations b
                             -- uncover cell
                             (getRevNeighbors ++ ls)
@@ -213,3 +226,15 @@ revealLocations b (l:ls) oldls
     -- cells are revealable if they are covered, not flagged, and a clue
     revealable :: Location -> Bool
     revealable loc = ((getContent b loc) /= Bomb) && ((getState b loc) == Covered)
+
+
+{-
+xg <- newStdGen
+yg <- newStdGen
+g = (xg, yg)
+game = makeGame Hard g
+display game
+slv = bestSolver game []
+display (fst slv)
+snd slv
+-}
