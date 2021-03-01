@@ -66,7 +66,7 @@ play (Gamestate size bombs board winstate) = do
         return (Gamestate size bombs board winstate)
     -- Input moves
     else do
-        putStrLn "\nWhat move would you like to make flag (\"f\"), click (\"c\"), or receive a hint (\"h\")?"
+        putStrLn "\nWhat move would you like to make flag (\"f\"), click (\"c\"), or receive a hint (\"h\")? (or \"quit\")"
         move <- getLine
         let lmove = map toLower move
         -- quitting
@@ -137,9 +137,21 @@ flagBombLocation (Gamestate size bombs board winstate) = do
   return (assistFlag (Gamestate size bombs board winstate))
 
 --assistClickLocation will click a safe place on the board for the user
-assistClickLocation (Gamestate size bombs board winstate) = do
-  putStrLn "\nClicked a safe spot for you!!"
-  return (assistClick (Gamestate size bombs board winstate))
+assistClickLocation game = do
+  putStrLn "do you want the first available spot(\"f\") or the best location (\"b\")"
+  typecl <- getLine
+  let ltypel = map toLower typecl
+  if ltypel == "b"
+  then do 
+    putStrLn "\nClicked the best spot!\n"
+    return (clickBest game)
+  else if ltypel == "f"
+  then do
+    putStrLn "\nClicked a safe spot for you!!\n"
+    return (assistClick game)
+  else do
+    putStrLn "Please enter a valid type of click: \"f\" or \"b\""
+    assistClickLocation game
 
 --doFlag will perform a flagging action on the location provided
 doFlag (Gamestate size bombs board winstate) = do

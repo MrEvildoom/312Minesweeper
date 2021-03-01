@@ -35,6 +35,10 @@ shouldReveal:: Board -> Location -> Bool
 shouldReveal b loc =
   ((getContent b loc) == Clue 0) && ((getState b loc) == Covered)
 
+--clicks the best location on the board
+clickBest:: Game -> Game
+clickBest (Gamestate size bombs board winState) = clickGame (Gamestate size bombs board winState) (bestLocation board)
+
 --clicks a safe spot on the board for the user as a hint.
 assistClick :: Game -> Game
 assistClick (Gamestate size bombs board winState) =
@@ -178,4 +182,34 @@ revealSpread b (l:ls) oldls
     revealable :: Location -> Bool
     revealable loc = ((getContent b loc) /= Bomb) && ((getState b loc) == Covered)
 
+bestLocation:: Board -> Location
+bestLocation board = findBest board (concat board) (0, (0,0))
 
+findBest _ [] acc = snd acc
+findBest board ((CellC cc cs cl):cells) acc = findBest board cells (isBetter board cl acc)
+
+
+
+isBetter board loc (maxr, locr) = 
+  if reveals > maxr 
+  then (reveals, loc)
+  else (maxr, locr)
+    where reveals = (length (revealLocations board [loc] []))
+
+--gives the list of locations that is revealed
+revealLocations :: Board -> [Location] -> [Location] -> [Location]
+revealLocations b [] oldls = oldls
+revealLocations b (l:ls) oldls
+  | l `elem` oldls = revealLocations b ls oldls -- discard if revealed
+  | (getContent b l) == Clue 0 = revealLocations b
+                            -- uncover cell
+                            (getRevNeighbors ++ ls)
+                             -- add revealable neighbors to ls
+                            (l:oldls) -- mark l as revealed
+  | otherwise = revealLocations b ls (l:oldls)
+  where
+    getRevNeighbors :: [Location]
+    getRevNeighbors = filter revealable ((findNeighbors l (getSize b)))
+    -- cells are revealable if they are covered, not flagged, and a clue
+    revealable :: Location -> Bool
+    revealable loc = ((getContent b loc) /= Bomb) && ((getState b loc) == Covered)
