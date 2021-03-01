@@ -17,7 +17,7 @@ import Data.Char
 
 main :: IO ()
 main = do
-  putStrLn "Welcome to Minesweeper!\nPlease enter a difficulty (very easy, easy, medium, hard): "
+  putStrLn "Welcome to Minesweeper!\nPlease enter a difficulty (\"very easy\", \"easy\", \"medium\", \"hard\"): "
   xg <- newStdGen
   yg <- newStdGen
   game <- createGameDiff (xg, yg)
@@ -26,7 +26,7 @@ main = do
   putStrLn "to quit (and lose), enter \"quit\"\n"
   endedGame <- play game
   putStrLn "Thanks for playing!"
-  putStrLn "do you want to play again? y or yes for yes, anything else for no"
+  putStrLn "do you want to play again? \"y\" or \"yes\" for yes, anything else for no"
   again <- getLine
   let lagain = map toLower again
   if lagain == "y" || lagain == "yes"
@@ -47,7 +47,7 @@ createGameDiff gens = do
   else if ldifficulty == "hard"
   then return (makeGame Hard gens)
   else do
-    putStrLn "Please enter a valid difficulty, one of easy, medium, or hard: "
+    putStrLn "Please enter a valid difficulty, one of \"very easy\", \"easy\", \"medium\", or \"hard\": "
     createGameDiff gens
 
 --play function takes a game and will check the win (and lose) conditon on every call
@@ -112,7 +112,7 @@ doHint game = do
   else if lhint == "no"
   then do return game
   else do
-    putStrLn "Please enter a valid hint request, a bomb flagged or a safe spot clicked: \"f\", \"c\", or \"no\" to leave assistant"
+    putStrLn "Please enter a valid hint request, flag a bomb (\"f\") or click a safe spot(\"c\"), or \"no\" to leave assistant"
     doHint game
 
 --flow of asking for a hint

@@ -111,8 +111,8 @@ checkLossCondition (Gamestate size bombs board winState) =
 
 
 -- should count all the bombs on the board
-countBombsFn :: Board -> Int
-countBombsFn board = sum [1 | row <- board,
+countBombs :: Board -> Int
+countBombs board = sum [1 | row <- board,
                                   (CellC cc cs cl) <- row,
                                   cc == Bomb]
 
@@ -177,3 +177,5 @@ revealSpread b (l:ls) oldls
     -- cells are revealable if they are covered, not flagged, and a clue
     revealable :: Location -> Bool
     revealable loc = ((getContent b loc) /= Bomb) && ((getState b loc) == Covered)
+
+
