@@ -88,24 +88,32 @@ play (Gamestate size bombs board winstate) = do
             -- hint
             else if lmove == "h"
             then do
-                putStrLn "\nWould you like to have a bomb flagged for you (\"f\"),or have a safe spot clicked for you (\"c\")?"
-                hint <- getLine
-                -- flag hint
-                if hint == "f"
-                then do
-                  updatedGame <- flagBombLocation (Gamestate size bombs board winstate)
-                  play updatedGame
-                -- click hint
-                else if hint == "c"
-                then do
-                  updatedGame <- assistClickLocation (Gamestate size bombs board winstate)
-                  play updatedGame
-                else do
-                  putStrLn "Please enter a valid hint request, a bomb flagged or a safe spot clicked: \"f\", \"c\", or \"quit\""
-                  play (Gamestate size bombs board winstate)
+                updatedGame <- doHint (Gamestate size bombs board winstate)
+                play updatedGame
             else do
                 putStrLn "Please enter a valid move: \"f\", \"c\", or \"quit\""
                 play (Gamestate size bombs board winstate)
+
+-- performs the assistant action
+doHint game = do
+  putStrLn "\nWould you like to have a bomb flagged for you (\"f\"),or have a safe spot clicked for you (\"c\")? , or \"no\" to leave assistant"
+  hint <- getLine
+  let lhint = map toLower hint
+  -- flag hint
+  if lhint == "f"
+  then do
+    updatedGame <- flagBombLocation game
+    return updatedGame
+  -- click hint
+  else if lhint == "c"
+  then do
+    updatedGame <- assistClickLocation game
+    return updatedGame
+  else if lhint == "no"
+  then do return game
+  else do
+    putStrLn "Please enter a valid hint request, a bomb flagged or a safe spot clicked: \"f\", \"c\", or \"no\" to leave assistant"
+    doHint game
 
 --flow of asking for a hint
 {-askForHint (Gamestate size bombs board winstate) = do
