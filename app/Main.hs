@@ -66,7 +66,7 @@ play (Gamestate size bombs board winstate) = do
         return (Gamestate size bombs board winstate)
     -- Input moves
     else do
-        putStrLn "\nWhat move would you like to make flag (\"f\"), click (\"c\"), or receive a hint (\"h\")? (or \"quit\")"
+        putStrLn "\nWhat move would you like to do:\n make flag (\"f\"), click (\"c\"), receive a hint (\"h\"), or have the game be solved for you (\"s\")? (or \"quit\")"
         move <- getLine
         let lmove = map toLower move
         -- quitting
@@ -90,13 +90,25 @@ play (Gamestate size bombs board winstate) = do
             then do
                 updatedGame <- doHint (Gamestate size bombs board winstate)
                 play updatedGame
+            else if lmove == "s"
+            then do
+                (solveGame, locs) <- doSolve (Gamestate size bombs board winstate)
+                display solveGame
+                putStrLn ("Your game was solved in " ++ (show (length locs)) ++ " moves by doing the following moves (last to first): ")
+                putStrLn (show locs)
+                return solveGame
             else do
-                putStrLn "Please enter a valid move: \"f\", \"c\", or \"quit\""
+                putStrLn "Please enter a valid move: \"f\", \"c\", \"h\", \"s\" or \"quit\""
                 play (Gamestate size bombs board winstate)
+
+-- does the solve returning the pair of game and locations clicked
+doSolve game = do
+  putStrLn "Solving Game...\nRemoving invalid flags..\nClicking cells...\n ...Done!"
+  return (bestSolver game [])
 
 -- performs the assistant action
 doHint game = do
-  putStrLn "\nWould you like to have a bomb flagged for you (\"f\"),or have a safe spot clicked for you (\"c\")? , or \"no\" to leave assistant"
+  putStrLn "\nWould you like to have a bomb flagged for you (\"f\"), have a safe spot clicked for you (\"c\"), or remove invalid flags (\"r\")? , or \"no\" to leave assistant"
   hint <- getLine
   let lhint = map toLower hint
   -- flag hint
@@ -109,27 +121,13 @@ doHint game = do
   then do
     updatedGame <- assistClickLocation game
     return updatedGame
+  else if lhint == "r"
+  then do doRemove game
   else if lhint == "no"
   then do return game
   else do
     putStrLn "Please enter a valid hint request, flag a bomb (\"f\") or click a safe spot(\"c\"), or \"no\" to leave assistant"
     doHint game
-
---flow of asking for a hint
-{-askForHint (Gamestate size bombs board winstate) = do
-  putStrLn "\nWould you like to have a bomb flagged for you (\"f\"),or have a safe spot clicked for you (\"c\")?"
-  hint <- getLine
-  if (hint == "f")
-  then do
-    updatedGame <- flagBombLocation (Gamestate size bombs board winstate)
-    play updatedGame
-  else if (hint == "c")
-  then do
-  updatedGame <- assistClickLocation (Gamestate size bombs board winstate)
-  play updatedGame
-  else do
-    putStrLn "Please request a valid hint, \"f\" to flag a bomb, \"c\" to click a safe spot, or \"quit\""
-  askForHint (Gamestate size bombs board winstate)-}
 
 --flagBombLocation will flag a bomb on the board for the user (currently flags only one bomb)
 flagBombLocation (Gamestate size bombs board winstate) = do
@@ -153,6 +151,10 @@ assistClickLocation game = do
     putStrLn "Please enter a valid type of click: \"f\" or \"b\""
     assistClickLocation game
 
+doRemove game = do
+  putStrLn "removed all your invalid flags"
+  return (removeInvalidGame game)
+
 --doFlag will perform a flagging action on the location provided
 doFlag (Gamestate size bombs board winstate) = do
   putStrLn "\nTo flag, we need a location."
@@ -165,6 +167,7 @@ doClick (Gamestate size bombs board winstate) = do
   putStrLn "\nTo click we need a location."
   loc <- getLoc (Gamestate size bombs board winstate)
   clickMsg board loc
+  if (getContent board loc) == Bomb then do whatToDo (Gamestate size bombs board winstate) else putStrLn ""
   return (clickGame (Gamestate size bombs board winstate) loc)
 
 --getLoc helper for doFlag and doClick that gets a vlaid location from the user given a certain game
@@ -200,6 +203,16 @@ validy coord (Gamestate (xsz, ysz) bombs board winstate) =
 --convert takes a string letter and converts to the correct int coordination representation
 convert:: String -> Int
 convert coord = fromJust $ elemIndex (coord!!0) ['a'..'z']
+
+--waht to do will return a soved version of the board that tells the player how they could have won the game
+whatToDo game = do
+  (solveGame, locs) <- doSolve game
+  putStrLn "You could have won by doing the following move sequence (last to first): "
+  putStrLn (show locs)
+  putStrLn "...to end at this board: "
+  display solveGame
+  putStrLn "... but instead you ended here: "
+
 
 --determines what message to send after a move (if flag, bomb, or already revealed)
 clickMsg board loc = do
