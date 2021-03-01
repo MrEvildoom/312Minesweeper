@@ -111,28 +111,28 @@ checkLossCondition (Gamestate size bombs board winState) =
 
 
 -- should count all the bombs on the board
-countBombsFn :: Board -> Location -> Int
-countBombsFn board loc = sum [1 | row <- board,
-                                  cell <- row,
-                                  (getContent board loc) == Bomb]
+countBombsFn :: Board -> Int
+countBombsFn board = sum [1 | row <- board,
+                                  (CellC cc cs cl) <- row,
+                                  cc == Bomb]
 
 -- should count all the currently revealed cells on the board
-countRevealedCells :: Board -> Location -> Int
-countRevealedCells board loc = sum [1 | row <- board,
-                                        cell <- row,
-                                        (getState board loc) == Uncovered]
+countRevealedCells :: Board -> Int
+countRevealedCells board = sum [1 | row <- board,
+                                        (CellC cc cs cl) <- row,
+                                        cs == Uncovered]
 
 -- should count all the currently unrevealed cells on the board
-countUnrevealedCells :: Board -> Location -> Int
-countUnrevealedCells board loc = sum [1 | row <- board,
-                                          cell <- row,
-                                          (getState board loc) == Covered]
+countUnrevealedCells :: Board -> Int
+countUnrevealedCells board = sum [1 | row <- board,
+                                          (CellC cc cs cl) <- row,
+                                          cs == Covered]
 
 -- should count all the currently flagged cells on the board
-countFlaggedCells :: Board -> Location -> Int
-countFlaggedCells board loc = sum [1 | row <- board,
-                                       cell <- row,
-                                       (getState board loc) == Flagged]
+countFlaggedCells :: Board -> Int
+countFlaggedCells board = sum [1 | row <- board,
+                                        (CellC cc cs cl) <- row,
+                                        cs == Flagged]
 
 -- FLAGGING A CELL --
 --flags the locaiton and updates the game

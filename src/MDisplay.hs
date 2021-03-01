@@ -4,6 +4,7 @@ module MDisplay where
 
 import MData
 import Data.List
+import Interaction
 
 {--
 Displays, when printed, look like this
@@ -31,7 +32,8 @@ display g = putStrLn ((makeInfoLine     g) ++
                       (makeDisplayBoard g))
 
 makeInfoLine :: Game -> [Char]
-makeInfoLine (Gamestate _ bombs _ _) = (show bombs) ++ " Bombs \n"
+makeInfoLine (Gamestate _ bombs board _) = "Unrevealed Cells: " ++ (show (countUnrevealedCells board)) ++
+                                           " | Bombs: " ++ (show bombs) ++ " | Flagged Cells: " ++ (show (countFlaggedCells board)) ++ "\n"
 -- TODO: number of flags, number of unrevealed spaces
 -- something like length filter isflag? concat board
 makeTopLine :: Game -> [Char]
