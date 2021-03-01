@@ -11,7 +11,7 @@ import Data.List
 -- Change state of all to be revealed
 -- Check for win condition
 
--- TODO: fix click to properly reveal 
+-- TODO: fix click to properly reveal
 
 clickGame:: Game -> Location -> Game
 clickGame (Gamestate size bombs board winState) loc =
@@ -19,7 +19,7 @@ clickGame (Gamestate size bombs board winState) loc =
   where checkCondition g = checkLossCondition $ checkWinCondition g
 
 click:: Board -> Location -> Board
-click board loc = 
+click board loc =
   if (shouldReveal board loc)
   then revealSpread board [loc] []
   else map (clickRow loc) board
@@ -32,28 +32,28 @@ click board loc =
 
 --returns true if cell should reveal beightbors (Clue 0 and not already revealed)
 shouldReveal:: Board -> Location -> Bool
-shouldReveal b loc = 
+shouldReveal b loc =
   ((getContent b loc) == Clue 0) && ((getState b loc) == Covered)
 
 --clicks a safe spot on the board for the user as a hint.
 assistClick :: Game -> Game
-assistClick (Gamestate size bombs board winState) = 
+assistClick (Gamestate size bombs board winState) =
     clickGame (Gamestate size bombs board winState) (getSafeLocation (concat board))
 
 getSafeLocation :: [Cell] -> Location
 getSafeLocation [] = (-1,0) -- this should never happen
-getSafeLocation ((CellC cc cs cl):t) 
+getSafeLocation ((CellC cc cs cl):t)
      | (cc /= Bomb && cs == Covered) = cl
      | otherwise = getSafeLocation(t)
 
 --flags a bomb for the user as a hint.
 assistFlag :: Game -> Game
-assistFlag (Gamestate size bombs board winState) = 
-	flagGame(Gamestate size bombs board winState) (getBombLocation (concat board))
+assistFlag (Gamestate size bombs board winState) =
+  flagGame(Gamestate size bombs board winState) (getBombLocation (concat board))
 
 getBombLocation :: [Cell] -> Location
 getBombLocation [] = (-1,0) -- this should never happen
-getBombLocation ((CellC cc cs cl):t) 
+getBombLocation ((CellC cc cs cl):t)
      | (cc == Bomb && cs /= Flagged) = cl
      | otherwise = getBombLocation(t)
 
@@ -92,10 +92,10 @@ checkWinCondition (Gamestate size bombs board winState) =
   --}
 
 checkAllBombsFlagged :: [Cell] -> Bool
-checkAllBombsFlagged b = 
-	foldr (&&) True (map (\ (CellC cc cs cl) ->
-                                cc == Bomb && cs == Flagged) 
-								(filter (\ (CellC cc cs cl) ->
+checkAllBombsFlagged b =
+  foldr (&&) True (map (\ (CellC cc cs cl) ->
+                                cc == Bomb && cs == Flagged)
+  (filter (\ (CellC cc cs cl) ->
                                          cc == Bomb) b))
 
 -- if there are any uncovered bombs, the game is lost
