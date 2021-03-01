@@ -90,10 +90,12 @@ play (Gamestate size bombs board winstate) = do
             then do
                 putStrLn "\nWould you like to have a bomb flagged for you (\"f\"),or have a safe spot clicked for you (\"c\")?"
                 hint <- getLine
+                -- flag hint
                 if hint == "f"
                 then do
                   updatedGame <- flagBombLocation (Gamestate size bombs board winstate)
                   play updatedGame
+                -- click hint
                 else if hint == "c"
                 then do
                   updatedGame <- assistClickLocation (Gamestate size bombs board winstate)
