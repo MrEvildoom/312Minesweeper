@@ -69,37 +69,41 @@ play (Gamestate size bombs board winstate) = do
         putStrLn "\nWhat move would you like to make flag (\"f\"), click (\"c\"), or receive a hint (\"h\")?"
         move <- getLine
         let lmove = map toLower move
+        -- quitting
         if lmove == "quit"
         then do
             putStrLn "quitting game..."
             return (Gamestate size bombs board Loss)
         else do
+            -- flag
             if lmove == "f"
             then do
                 updatedGame <- doFlag (Gamestate size bombs board winstate)
                 play updatedGame
+            -- click
             else if lmove == "c"
             then do
                 updatedGame <- doClick (Gamestate size bombs board winstate)
                 play updatedGame
-  else if lmove == "h"
-  then do
-  putStrLn "\nWould you like to have a bomb flagged for you (\"f\"),or have a safe spot clicked for you (\"c\")?"
-  hint <- getLine
-  if hint == "f"
-  then do
-  updatedGame <- flagBombLocation (Gamestate size bombs board winstate)
-  play updatedGame
-  else if hint == "c"
-  then do
-  updatedGame <- assistClickLocation (Gamestate size bombs board winstate)
-  play updatedGame
-  else do
-      putStrLn "Please enter a valid hint request, a bomb flagged or a safe spot clicked: \"f\", \"c\", or \"quit\""
-      	play (Gamestate size bombs board winstate)
-            -- else do
-            --     putStrLn "Please enter a valid move: \"f\", \"c\", or \"quit\""
-            --     play (Gamestate size bombs board winstate)
+            -- hint
+            else if lmove == "h"
+            then do
+                putStrLn "\nWould you like to have a bomb flagged for you (\"f\"),or have a safe spot clicked for you (\"c\")?"
+                hint <- getLine
+                if hint == "f"
+                then do
+                  updatedGame <- flagBombLocation (Gamestate size bombs board winstate)
+                  play updatedGame
+                else if hint == "c"
+                then do
+                  updatedGame <- assistClickLocation (Gamestate size bombs board winstate)
+                  play updatedGame
+                else do
+                  putStrLn "Please enter a valid hint request, a bomb flagged or a safe spot clicked: \"f\", \"c\", or \"quit\""
+                  play (Gamestate size bombs board winstate)
+            else do
+                putStrLn "Please enter a valid move: \"f\", \"c\", or \"quit\""
+                play (Gamestate size bombs board winstate)
 
 --flow of asking for a hint
 {-askForHint (Gamestate size bombs board winstate) = do
