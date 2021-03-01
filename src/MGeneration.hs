@@ -90,3 +90,6 @@ boardPlaceClues size b = map (map calcClues) b
     sumBombs :: [Location] -> Content
     sumBombs ls = Clue (foldl (\acc c -> if  c == Bomb then acc+1 else acc) 0
                               (map (getContent b) ls))
+
+getBoard:: Game -> Board
+getBoard (Gamestate size bombs board winstate) = board
