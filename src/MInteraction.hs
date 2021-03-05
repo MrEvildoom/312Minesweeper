@@ -11,8 +11,6 @@ import Data.List
 -- Change state of all to be revealed
 -- Check for win condition
 
--- TODO: fix click to properly reveal
-
 clickGame:: Game -> Location -> Game
 clickGame (Gamestate size bombs board winState) loc =
   checkCondition (Gamestate size bombs (click board loc) winState)
