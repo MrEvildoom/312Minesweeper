@@ -94,7 +94,7 @@ play (Gamestate size bombs board winstate) = do
             then do
                 (solveGame, locs) <- doSolve (Gamestate size bombs board winstate)
                 display solveGame
-                putStrLn ("Your game was solved in " ++ (show (length locs)) ++ " moves by doing the following moves (last to first): ")
+                putStrLn ("Your game was solved in " ++ (show (length locs)) ++ " moves by doing the following moves (first to last): ")
                 putStrLn (show locs)
                 return solveGame
             else do
@@ -207,7 +207,7 @@ convert coord = fromJust $ elemIndex (coord!!0) ['a'..'z']
 --waht to do will return a soved version of the board that tells the player how they could have won the game
 whatToDo game = do
   (solveGame, locs) <- doSolve game
-  putStrLn "You could have won by doing the following move sequence (last to first): "
+  putStrLn "You could have won by doing the following move sequence (first to last): "
   putStrLn (show locs)
   putStrLn "...to end at this board: "
   display solveGame
@@ -233,7 +233,7 @@ clickFlagMsg = do
 
 --prints a message indicating a bomb was pressed
 bombMsg = do
-  putStrLn "You pressed a bomb..\n"
+  putStrLn "You pressed a bomb...\n"
 
 --prints a message stating that the locaiton is already revealed
 revealMsg = do
