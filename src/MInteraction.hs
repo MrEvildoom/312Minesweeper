@@ -97,12 +97,6 @@ checkWinCondition (Gamestate size bombs board winState) =
     unrevNonbomb :: Cell -> Bool
     unrevNonbomb (CellC (Clue _) Covered _) = True
     unrevNonbomb _ = False
-  {--
-  if ((countBombsFn (l:ls)) + (countRevealedCells (l:ls))) == (length l) * (length ls)
-  then (Gamestate size bombs (l:ls) Win)
-  -- TODO: win condition, terminate the function
-  else (Gamestate size bombs (l:ls) winState)
-  --}
 
 checkAllBombsFlagged :: [Cell] -> Bool
 checkAllBombsFlagged b =
@@ -214,10 +208,12 @@ bestLocation:: Board -> Location
 bestLocation board = findBest board (concat board) (0, (0,0))
 
 --returns a best location
+findBest :: [Row] -> [Cell] -> (Int, Location) -> Location
 findBest _ [] acc = snd acc
 findBest board ((CellC cc cs cl):cells) acc = findBest board cells (isBetter board cl acc)
 
 --checks if the current acc in findBest is better thatn the current location
+isBetter :: Board -> Location -> (Int, Location) -> (Int, Location)
 isBetter board loc (maxr, locr) = 
   if reveals > maxr && (getContent board loc) /= Bomb
   then (reveals, loc)

@@ -48,33 +48,16 @@ To initialize, call with an empty list and the desired number of bombs
 --}
 boardPlaceBombs :: Board -> Size -> Int -> [Location] -> [Location] -> (StdGen, StdGen) -> Board
 boardPlaceBombs b _ 0 _ _ _ = b
-boardPlaceBombs b s n [] used gens = boardPlaceBombs b s n (listLoc gens s n) used gens
+boardPlaceBombs b s n [] used gens = boardPlaceBombs b s n (randLoc gens s n) used gens
 boardPlaceBombs b s n (l:ls) used gens
   | l `elem` used = boardPlaceBombs b s n ls used gens
   | otherwise     = boardPlaceBombs (setContent b l Bomb) s (n-1) ls (l:used) gens
 
--- gets a list of n location for bombs to be replaced (allows duplicates)
-randLoc :: Size -> Int -> [Location]
-randLoc (xsize, ysize) n = (take n (zip [1..] [1..]))
-     --TODO this is just so the program compiles. Fix this!
-
-{-newRandLoc (xsize, ysize) n =
-  do
-    xg <- newStdGen
-    yg <- newStdGen
-    return (listLoc xg yg (0, (xsize-1)) (0, (ysize-1)) n)
--}
 --the new randloc that takes generators as an input and outputs n unique random locations
-listLoc (xg, yg) (szx, szy) n = take n (nub (zip (randomRs (0, szx-1) xg) (randomRs (0, szy-1) yg)))
+randLoc:: (Eq a, Eq b, Random a, Random b, RandomGen g1, RandomGen g2, Num a, Num b) => (g1, g2) -> (a, b) -> Int -> [(a, b)]
+randLoc (xg, yg) (szx, szy) n = take n (nub (zip (randomRs (0, szx-1) xg) (randomRs (0, szy-1) yg)))
 
-{--
-    do
-        xg <- newStdGen
-        yg <- newStdGen
-        return (zip
-                  (take n (randomRs (0, xsize-1) xg))
-                  (take n (randomRs (0, ysize-1) yg)))
---}
+
 
 placeClues :: Game -> Game
 placeClues (Gamestate size bombs board winstate) = (Gamestate size bombs (boardPlaceClues size board) winstate)

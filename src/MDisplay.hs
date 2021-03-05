@@ -3,8 +3,8 @@
 module MDisplay where
 
 import MData
+import MInteraction
 import Data.List
-import Interaction
 
 {--
 Displays, when printed, look like this
@@ -12,8 +12,8 @@ Displays, when printed, look like this
   00 Bombs   -- infoLine
   a b c d e  -- topline
   ---------
-a|X F 1 0
-b|X X 2 0 0
+a|X F 1 . .
+b|X X 2 . .
 c|X F 1 1 1
 d|X X X X X
 e|X X X X X
@@ -32,15 +32,19 @@ display g = putStrLn ((makeInfoLine     g) ++
                       (makeDisplayBoard g))
 
 makeInfoLine :: Game -> [Char]
-makeInfoLine (Gamestate _ bombs board _) = "Unrevealed Cells: " ++ (show (countUnrevealedCells board)) ++
-                                           " | Bombs: " ++ (show bombs) ++ " | Flagged Cells: " ++ (show (countFlaggedCells board)) ++ "\n"
--- TODO: number of flags, number of unrevealed spaces
+makeInfoLine (Gamestate _ bombs board _) =
+    "Unrevealed Cells: " ++ (show (countUnrevealedCells board)) ++
+    " | Bombs: " ++ (show bombs) ++ 
+    " | Flagged Cells: " ++ (show (countFlaggedCells board)) ++
+    "\n"
+
+
 -- something like length filter isflag? concat board
 makeTopLine :: Game -> [Char]
-makeTopLine (Gamestate (x, _) _ _ _) = ' ':' ':
-                                       (intersperse ' ' (take x ['a'..])) ++
-                                       "\n"
-                                    -- ++ replicate (2+(2*x)) '_' ++ "\n"
+makeTopLine (Gamestate (x, _) _ _ _) =
+    ' ':' ':
+    (intersperse ' ' (take x ['a'..])) ++
+     "\n"
 
 makeDisplayBoard :: Game -> [Char]
 makeDisplayBoard (Gamestate (x, y) bombs board _) = flatBoard
