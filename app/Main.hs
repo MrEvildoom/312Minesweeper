@@ -167,7 +167,7 @@ doClick (Gamestate size bombs board winstate) = do
   putStrLn "\nTo click we need a location."
   loc <- getLoc (Gamestate size bombs board winstate)
   clickMsg board loc
-  if (getContent board loc) == Bomb then do whatToDo (Gamestate size bombs board winstate) else putStrLn ""
+  if ((getContent board loc) == Bomb) && ((getState board loc) == Covered) then do whatToDo (Gamestate size bombs board winstate) else putStrLn ""
   return (clickGame (Gamestate size bombs board winstate) loc)
 
 --getLoc helper for doFlag and doClick that gets a vlaid location from the user given a certain game
