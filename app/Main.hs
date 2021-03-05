@@ -95,7 +95,7 @@ play (Gamestate size bombs board winstate) = do
                 (solveGame, locs) <- doSolve (Gamestate size bombs board winstate)
                 display solveGame
                 putStrLn ("Your game was solved in " ++ (show (length locs)) ++ " moves by doing the following moves (first to last): ")
-                putStrLn (show locs)
+                putStrLn (show (convertLoc locs))
                 return solveGame
             else do
                 putStrLn "Please enter a valid move: \"f\", \"c\", \"h\", \"s\" or \"quit\""
@@ -204,11 +204,17 @@ validy coord (Gamestate (xsz, ysz) bombs board winstate) =
 convert:: String -> Int
 convert coord = fromJust $ elemIndex (coord!!0) ['a'..'z']
 
+--converts a num to a letter representation
+convertnum n = ['a'..'z'] !! n
+
+--converts a list of locaitons to a list of letter coordinates
+convertLoc locs = map (\ (a,b) -> ((convertnum a), (convertnum b))) locs
+
 --waht to do will return a soved version of the board that tells the player how they could have won the game
 whatToDo game = do
   (solveGame, locs) <- doSolve game
   putStrLn "You could have won by doing the following move sequence (first to last): "
-  putStrLn (show locs)
+  putStrLn (show (convertLoc locs))
   putStrLn "...to end at this board: "
   display solveGame
   putStrLn "... but instead you ended here: "
@@ -225,7 +231,6 @@ clickMsg board loc = do
       if (getContent board loc) == Bomb
       then do bombMsg
       else do putStrLn ("You found a valid space, good job!\nYou have revealed " ++ (show (countRevealedCells board)) ++ "now \n")
-
 
 --prints a message saying location is flagged
 clickFlagMsg = do
