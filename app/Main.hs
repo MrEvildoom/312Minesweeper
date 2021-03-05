@@ -2,7 +2,7 @@ module Main where
 
 import MData
 import MGeneration
-import Interaction
+import MInteraction
 import MDisplay
 import System.IO
 import System.Random
