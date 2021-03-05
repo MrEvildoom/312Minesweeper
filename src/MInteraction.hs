@@ -1,4 +1,4 @@
-module Interaction where
+module MInteraction where
 
 import MData
 import System.IO
