@@ -46,7 +46,7 @@ bestSolver game locs = solve (removeInvalidGame game) locs
   where solve (Gamestate size bombs board winState) locs = 
           if winState == Continue
           then bestSolver (clickBest (Gamestate size bombs board winState)) ((bestLocation board):locs)
-          else ((Gamestate size bombs board winState), locs)
+          else ((Gamestate size bombs board winState), (reverse locs))
 
 --clicks a safe spot on the board for the user as a hint.
 assistClick :: Game -> Game
