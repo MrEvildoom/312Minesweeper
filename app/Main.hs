@@ -249,7 +249,7 @@ clickMsg board loc = do
     else do
       if (getContent board loc) == Bomb
       then do bombMsg
-      else do putStrLn ("You found a valid space, good job!\nYou have revealed " ++ (show (countRevealedCells board)) ++ "now \n")
+      else do putStrLn ("You found a valid space, good job!\nYou have revealed " ++ (show (countRevealedCells board)) ++ " now \n")
 
 --prints a message saying location is flagged
 clickFlagMsg :: IO ()

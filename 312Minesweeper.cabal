@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 8681ab0d4d7dce765a486b7c18434837955b7f8b4e23a9a81c866f1f1950bd46
+-- hash: be640e4f9748c7f746ba3acf44aba2963ba1b37bde4a7af2dc4b17051d3f1604
 
 name:           312Minesweeper
 version:        0.1.0.0
@@ -27,10 +27,10 @@ source-repository head
 
 library
   exposed-modules:
-      Interaction
       MData
       MDisplay
       MGeneration
+      MInteraction
   other-modules:
       Paths_312Minesweeper
   hs-source-dirs:
